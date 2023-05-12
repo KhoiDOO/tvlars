@@ -60,8 +60,7 @@ def main_worker(gpu, args):
             "train_loss" : [],
             "train_acc" : [],
             "test_loss" : [],
-            "test_acc" : [],
-            "lr" : []
+            "test_acc" : []
         }
         
         log_path = args.log_dir + f"/{args.bs}_{args.lr}_{args.sd}.parquet"
@@ -137,8 +136,6 @@ def main_worker(gpu, args):
         for step, (train_img, train_label) in tqdm(enumerate(train_loader, start=epoch * len(train_loader))):
             if args.sd == 'lars-warm':
                 adjust_learning_rate(args, optimizer, train_loader, step)
-            elif args.sd == 'cosine':
-                scheduler.step()
             batch_count = step
             train_img = train_img.cuda(gpu, non_blocking=True)
             train_label = train_label.cuda(gpu, non_blocking=True)
@@ -149,6 +146,9 @@ def main_worker(gpu, args):
             loss.backward()
             optimizer.step()
             
+            if args.sd == 'cosine':
+                scheduler.step()
+            
             if args.rank == 0:
                 train_loss += loss.item()
                 _, predicted = logits.max(1)
@@ -158,7 +158,6 @@ def main_worker(gpu, args):
         if args.rank == 0:
             log["train_loss"].append(train_loss/(batch_count+1))
             log["train_acc"].append(100.*correct/total)
-            log["lr"].append(optimizer[0]['lr'])
         
         if args.rank == 0:
             test_sampler.set_epoch(epoch)
