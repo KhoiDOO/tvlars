@@ -5,6 +5,8 @@ import random
 import numpy as np
 import torch
 
+from train import main
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
                     prog='Optimizer BenchMark',
@@ -27,7 +29,7 @@ if __name__ == "__main__":
     
     parser.add_argument('--ds', type=str, default='cifar10', choices=['cifar10', 'cifar100'],
                         help='Data set name')
-    parser.add_argument('--model', type=str, default='resnet18',
+    parser.add_argument('--model', type=str, default='resnet18', choices= ['resnet18'],
                         help='model used in training')
     parser.add_argument('--opt', type=str, default='lars', choices=['adam', 'adamw', 'adagrad', 'rmsprop', 'lars', 'tvlars'],
                         help='optimizer used in training')
@@ -43,3 +45,5 @@ if __name__ == "__main__":
         random.seed(args.seed)
         np.random.seed(args.seed)
         torch.manual_seed(args.seed)
+    
+    main(args=args)
