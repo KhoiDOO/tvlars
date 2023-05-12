@@ -35,7 +35,7 @@ class TVLARS(optim.Optimizer):
                                                 (
                                                     g['eta'] * torch.pow(
                                                         torch.exp(
-                                                            torch.FloatTensor([2])
+                                                            g['lmbda'] * torch.FloatTensor([self.epoch_cnt + 1])
                                                             )[0], -1
                                                         ) * param_norm / update_norm), one), one)
                     dp = dp.mul(q)
