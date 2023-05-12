@@ -29,7 +29,7 @@ if __name__ == "__main__":
                         help='Data set name')
     parser.add_argument('--model', type=str, default='resnet18',
                         help='model used in training')
-    parser.add_argument('--opt', type=str, default='lars',
+    parser.add_argument('--opt', type=str, default='lars', choices=['adam', 'adamw', 'adagrad', 'rmsprop', 'lars', 'tvlars'],
                         help='optimizer used in training')
     parser.add_argument('--sd', type=str, default='cosine', choices=['cosine', 'lars-warm'],
                         help='Learning rate scheduler used in training')

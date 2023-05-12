@@ -31,8 +31,6 @@ def folder_setup(args: argparse):
         opt_dir = data_model_dir + f"/{args.opt}"
     elif args.opt == 'tvlars':
         opt_dir = data_model_dir + f"/{args.opt}_{args.lmbda}"
-    else:
-        raise Exception(f'the optimizer {args.opt} is currently not supported')
     
     if not os.path.exists(opt_dir):
         os.mkdir(opt_dir)
