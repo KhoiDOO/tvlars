@@ -1,13 +1,15 @@
 import torch
 from torch import optim
 
-class LARS(optim.Optimizer):
-    def __init__(self, params, lr, weight_decay=5e-4, momentum=0.9, eta=0.001,
+class TVLARS(optim.Optimizer):
+    def __init__(self, params, lr, weight_decay=5e-4, momentum=0.9, eta=0.001, lmbda=0.001,
                  weight_decay_filter=False, lars_adaptation_filter=False):
         defaults = dict(lr=lr, weight_decay=weight_decay, momentum=momentum,
                         eta=eta, weight_decay_filter=weight_decay_filter,
-                        lars_adaptation_filter=lars_adaptation_filter)
+                        lars_adaptation_filter=lars_adaptation_filter, lmbda=lmbda)
         super().__init__(params, defaults)
+        
+        self.epoch_cnt = 0
 
     def exclude_bias_and_norm(self, p):
         return p.ndim == 1
@@ -30,7 +32,12 @@ class LARS(optim.Optimizer):
                     one = torch.ones_like(param_norm)
                     q = torch.where(param_norm > 0.,
                                     torch.where(update_norm > 0,
-                                                (g['eta'] * param_norm / update_norm), one), one)
+                                                (
+                                                    g['eta'] * torch.pow(
+                                                        torch.exp(
+                                                            torch.FloatTensor([2])
+                                                            )[0], -1
+                                                        ) * param_norm / update_norm), one), one)
                     dp = dp.mul(q)
 
                 param_state = self.state[p]
@@ -40,3 +47,5 @@ class LARS(optim.Optimizer):
                 mu.mul_(g['momentum']).add_(dp)
 
                 p.add_(mu, alpha=-g['lr'])
+
+        self.epoch_cnt += 1
