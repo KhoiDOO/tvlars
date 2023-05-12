@@ -70,7 +70,7 @@ def main_worker(gpu, args):
     torch.backends.cudnn.benchmark = True
     
     # Data Loader
-    num_class, train_dataset, test_dataset = get_dataset(dataset_name=args.ds)
+    num_classes, train_dataset, test_dataset = get_dataset(dataset_name=args.ds)
     
     assert args.bs % args.world_size == 0
     train_sampler = DistributedSampler(train_dataset)
@@ -85,7 +85,7 @@ def main_worker(gpu, args):
     )
     
     # Model 
-    model = get_model(model=args.model, num_class=num_class).cuda(gpu)
+    model = get_model(model=args.model, num_classes=num_classes).cuda(gpu)
     model = DDP(model, device_ids=[gpu])
     
     # Optimizer
