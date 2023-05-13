@@ -81,8 +81,8 @@ if __name__ == "__main__":
                 filename = log_file.split("/")[-1].replace('.parquet', '')
                 filename_split = tuple(filename.split("_"))
                 bs, lr, sd = filename_split
-                log_template["bs"].append(bs)
-                log_template["lr"].append(lr)
+                log_template["bs"].append(int(bs))
+                log_template["lr"].append(float(lr))
                 log_template["sd"].append(sd)
                 
                 base_df = pd.read_parquet(log_file)
