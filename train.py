@@ -27,7 +27,7 @@ def folder_setup(args: argparse):
     if not os.path.exists(data_model_dir):
         os.mkdir(data_model_dir)
     
-    if args.opt in ['adam', 'adamw', 'adagrad', 'rmsprop', 'lars', 'tvlars']:
+    if args.opt in ['adam', 'adamw', 'adagrad', 'rmsprop', 'lars']:
         opt_dir = data_model_dir + f"/{args.opt}"
     elif args.opt == 'tvlars':
         opt_dir = data_model_dir + f"/{args.opt}_{args.lmbda}"
