@@ -87,13 +87,11 @@ if __name__ == "__main__":
                 
                 base_df = pd.read_parquet(log_file)
                 log_template["train_acc"].append(
+                    max(base_df["train_acc"].values.tolist())
+                )
+                log_template["test_acc"].append(
                     max(base_df["test_acc"].values.tolist())
                 )
-                log_template["train_acc"].append(
-                    max(base_df["test_acc"].values.tolist())
-                )
-            
-            print(log_template)
             
             base_log_df = pd.DataFrame(log_template)
             base_log_df.to_csv(data_model_result_dir + f"/{opt_split[-1]}.csv")
