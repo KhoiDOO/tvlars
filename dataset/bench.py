@@ -31,6 +31,10 @@ data_map = {
     'cifar100' : {
         '#class' : 100,
         'dataset' : datasets.CIFAR100
+    },
+    'imagenet' : {
+        '#class' : 1000,
+        'dataset' : datasets.ImageNet
     }
 }
 
@@ -40,16 +44,30 @@ def get_dataset(dataset_name:str):
         raise Exception(f"The data set {dataset_name} is currently not supported")
     data_info = data_map[dataset_name]
     class_cnt = data_info['#class']
-    train_dataset = data_info['dataset'](
-        root = save_dir,
-        transform = train_transform,
-        train = True,
-        download = True
-    )
-    test_dataset = data_info['dataset'](
-        root = save_dir,
-        transform = test_transform,
-        train = False,
-        download = True
-    )
+    
+    if dataset_name == 'imagenet':
+        train_dataset = data_info['dataset'](
+            root = save_dir,
+            transform = train_transform,
+            split = 'train'
+        )
+        test_dataset = data_info['dataset'](
+            root = save_dir,
+            transform = test_transform,
+            split = 'val'
+        )
+        
+    else:
+        train_dataset = data_info['dataset'](
+            root = save_dir,
+            transform = train_transform,
+            train = True,
+            download = True
+        )
+        test_dataset = data_info['dataset'](
+            root = save_dir,
+            transform = test_transform,
+            train = False,
+            download = True
+        )
     return (class_cnt, train_dataset, test_dataset)
