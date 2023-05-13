@@ -93,5 +93,5 @@ if __name__ == "__main__":
                     max(base_df["test_acc"].values.tolist())
                 )
             
-            base_log_df = pd.DataFrame(log_template)
+            base_log_df = pd.DataFrame(log_template).sort_values(by='bs')
             base_log_df.to_csv(data_model_result_dir + f"/{opt_split[-1]}.csv")
