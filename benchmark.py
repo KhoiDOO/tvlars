@@ -77,7 +77,7 @@ if __name__ == "__main__":
             log_template = get_report_temp(opt_name=opt_name)
             
             for log_file in log_files:
-                filename = log_file.split("/")[-1].removesuffix('.parquet')
+                filename = log_file.split("/")[-1].replace('.parquet', '')
                 filename_split = tuple(filename.split("_"))
                 bs, lr, sd = filename_split
                 log_template["bs"].append(bs)
