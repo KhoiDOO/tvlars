@@ -3,7 +3,9 @@ from torch import nn
 from torchvision import models
 
 model_map = {
-    'resnet18' : models.resnet18
+    'resnet18' : models.resnet18,
+    'resnet50' : models.resnet50,
+    'effb0' : models.efficientnet_b0
 }
 
 def get_model(model:str, num_classes:int):
