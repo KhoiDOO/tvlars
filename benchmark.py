@@ -6,8 +6,9 @@ import seaborn as sns
 import numpy as np
 from glob import glob
 
-def get_report_temp(opt_name):
+def get_report_temp(opt_split):
     control = None
+    opt_name = opt_split[-1]
     if "_" in opt_name:
         full_opt_name = opt_name.split("_")
         if full_opt_name[0] == 'lars':
@@ -27,7 +28,7 @@ def get_report_temp(opt_name):
         }
     elif control == 1:
         return {
-            "lambda" : [full_opt_name[1]]*len(glob(opt_dir + "/*.parquet")),
+            "lambda" : [full_opt_name[1]]*len(glob("/".join(opt_split) + "/*.parquet")),
             "bs" : [],
             "lr" : [],
             "sd" : [],
@@ -69,12 +70,12 @@ if __name__ == "__main__":
         
         opt_dirs = glob(data_model_dir + "/*")
         for opt_dir in opt_dirs:
-            opt_name = opt_dir.split("/")[-1]
+            opt_split = opt_dir.split("/")
             log_files = glob(opt_dir + "/*.parquet")
             if len(log_files) == 0:
                 continue
             
-            log_template = get_report_temp(opt_name=opt_name)
+            log_template = get_report_temp(opt_split=opt_split)
             
             for log_file in log_files:
                 filename = log_file.split("/")[-1].replace('.parquet', '')
@@ -93,4 +94,4 @@ if __name__ == "__main__":
                 )
             
             base_log_df = pd.DataFrame(log_template)
-            base_log_df.to_csv(data_model_result_dir + f"/{opt_name}.csv")
+            base_log_df.to_csv(data_model_result_dir + f"/{opt_split[-1]}.csv")
