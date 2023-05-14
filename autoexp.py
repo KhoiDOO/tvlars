@@ -41,28 +41,22 @@ if __name__ == "__main__":
                                 else:
                                     print(f"{filename}: Non-Existed -> Conducted")
                                     conduct = True
-                                    while(conduct):
-                                        try:
-                                            process = subprocess.Popen([
-                                                "python", "single.py", 
-                                                "--bs", str(bs), 
-                                                "--workers", "4",
-                                                "--epochs", str(epoch),
-                                                "--port", str(randint(4444, 8889)),
-                                                "--wd", str(w),
-                                                "--ds", dataset,
-                                                "--model", model,
-                                                "--opt", "lars",
-                                                "--sd", sd
-                                            ],
-                                                                       stdin=subprocess.PIPE,
-                                                                       stdout=subprocess.PIPE,
-                                                                       stderr=subprocess.PIPE)
-                                            conduct = False
-                                        except RuntimeError as e:
-                                            print(e)
-                                            process.send_signal(signal.CTRL_C_EVENT)
-                                            continue
+                                    try:
+                                        process = subprocess.Popen([
+                                            "python", "single.py", 
+                                            "--bs", str(bs), 
+                                            "--workers", "4",
+                                            "--epochs", str(epoch),
+                                            "--port", str(randint(4444, 8889)),
+                                            "--wd", str(w),
+                                            "--ds", dataset,
+                                            "--model", model,
+                                            "--opt", "lars",
+                                            "--sd", sd
+                                        ])
+                                        conduct = False
+                                    except RuntimeError as e:
+                                        print(e)
                 
     elif args.opt == 'tvlars':
         report_temp = os.getcwd() + "/{0}_{1}/tvlars_{2}/{3}_{4}_{5}.parquet"
@@ -81,26 +75,20 @@ if __name__ == "__main__":
                                     else:
                                         print(f"{filename}: Non-Existed -> Conducted")
                                         conduct = True
-                                        while(conduct):
-                                            try:
-                                                process = subprocess.Popen([
-                                                    "python", "single.py", 
-                                                    "--bs", str(bs), 
-                                                    "--workers", "4",
-                                                    "--epochs", str(epoch),
-                                                    "--port", str(randint(4444, 8889)),
-                                                    "--wd", str(w),
-                                                    "--ds", dataset,
-                                                    "--model", model,
-                                                    "--opt", "tvlars",
-                                                    "--sd", sd,
-                                                    "--lmbda", str(lmd)
-                                                ],
-                                                                        stdin=subprocess.PIPE,
-                                                                        stdout=subprocess.PIPE,
-                                                                        stderr=subprocess.PIPE)
-                                                conduct = False
-                                            except RuntimeError as e:
-                                                print(e)
-                                                process.send_signal(signal.CTRL_C_EVENT)
-                                                continue
+                                        try:
+                                            subprocess.run([
+                                                "python", "single.py", 
+                                                "--bs", str(bs), 
+                                                "--workers", "4",
+                                                "--epochs", str(epoch),
+                                                "--port", str(randint(4444, 8889)),
+                                                "--wd", str(w),
+                                                "--ds", dataset,
+                                                "--model", model,
+                                                "--opt", "tvlars",
+                                                "--sd", sd,
+                                                "--lmbda", str(lmd)
+                                            ])
+                                            conduct = False
+                                        except RuntimeError as e:
+                                            print(e)
