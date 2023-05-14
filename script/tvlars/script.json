@@ -22,6 +22,6 @@
     "wd" : [5e-4],
     "ds" : ["cifar10"],
     "model" : ["resnet18"],
-    "opt" : "lars",
-    "sd" : ["None", "lars-warm"]
+    "opt" : "tvlars",
+    "sd" : ["None"]
 }
