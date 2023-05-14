@@ -33,7 +33,7 @@ if __name__ == "__main__":
                         help='model used in training')
     parser.add_argument('--opt', type=str, default='lars', choices=['adam', 'adamw', 'adagrad', 'rmsprop', 'lars', 'tvlars'],
                         help='optimizer used in training')
-    parser.add_argument('--sd', type=str or None, default=None, choices=[None, 'cosine', 'lars-warm'],
+    parser.add_argument('--sd', type=str, default="None", choices=["None", 'cosine', 'lars-warm'],
                         help='Learning rate scheduler used in training')
     
     parser.add_argument('--lmbda', type=float, default=0.001,
