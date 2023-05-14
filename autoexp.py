@@ -30,7 +30,7 @@ if __name__ == "__main__":
             for model in models:
                 for w in wd:
                     for bs in bss:
-                        for lr in script["non-warm"]["lr"][bs]:
+                        for lr in script["non-warm"]["lr"][str(bs)]:
                             for sd in sds:
                                 filepath = report_temp.format(dataset, model, bs, lr, sd)
                                 filename = "/".join(filepath.split("/")[-2:])
