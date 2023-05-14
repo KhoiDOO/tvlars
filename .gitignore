@@ -159,5 +159,7 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-# Logging File
+# Logging Folders/Files
 *.parquet
+results/
+clean_report.json
