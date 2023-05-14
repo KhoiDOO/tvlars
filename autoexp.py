@@ -10,6 +10,8 @@ parser = argparse.ArgumentParser(
 )
 parser.add_argument("--opt", type=str, default='lars', choices=['lars', 'tvlars'],
                     help='Optimizer used in automation experiment')
+parser.add_argument("--debug", action='store_true',
+                    help='Debug Mode')
 
 args = parser.parse_args()
 
@@ -26,7 +28,7 @@ if __name__ == "__main__":
     sds = script["sd"]
     
     if args.opt == 'lars':
-        report_temp = os.getcwd() + "/{0}_{1}/lars/{2}_{3}_{4}.parquet"
+        report_temp = os.getcwd() + "/runs/{0}_{1}/lars/{2}_{3}_{4}.parquet"
         
         for dataset in datasets:
             for model in models:
@@ -40,9 +42,8 @@ if __name__ == "__main__":
                                     print(f"{filename}: Existed -> Skipped")
                                 else:
                                     print(f"{filename}: Non-Existed -> Conducted")
-                                    conduct = True
-                                    try:
-                                        process = subprocess.Popen([
+                                    if not args.debug:
+                                        subprocess.run([
                                             "python", "single.py", 
                                             "--bs", str(bs), 
                                             "--workers", "4",
@@ -54,12 +55,9 @@ if __name__ == "__main__":
                                             "--opt", "lars",
                                             "--sd", sd
                                         ])
-                                        conduct = False
-                                    except RuntimeError as e:
-                                        print(e)
                 
     elif args.opt == 'tvlars':
-        report_temp = os.getcwd() + "/{0}_{1}/tvlars_{2}/{3}_{4}_{5}.parquet"
+        report_temp = os.getcwd() + "/runs/{0}_{1}/tvlars_{2}/{3}_{4}_{5}.parquet"
         
         for dataset in datasets:
             for model in models:
@@ -74,8 +72,7 @@ if __name__ == "__main__":
                                         print(f"{filename}: Existed -> Skipped")
                                     else:
                                         print(f"{filename}: Non-Existed -> Conducted")
-                                        conduct = True
-                                        try:
+                                        if not args.debug:
                                             subprocess.run([
                                                 "python", "single.py", 
                                                 "--bs", str(bs), 
@@ -89,6 +86,3 @@ if __name__ == "__main__":
                                                 "--sd", sd,
                                                 "--lmbda", str(lmd)
                                             ])
-                                            conduct = False
-                                        except RuntimeError as e:
-                                            print(e)
