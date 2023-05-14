@@ -2,6 +2,7 @@ import os, sys
 import subprocess
 import argparse
 import json
+from random import randint
 
 parser = argparse.ArgumentParser(
     prog="Automation Experiment Optimizer Benchmark"
@@ -38,6 +39,18 @@ if __name__ == "__main__":
                                     print(f"{filename}: Existed -> Skipped")
                                 else:
                                     print(f"{filename}: Non-Existed -> Conducted")
+                                    subprocess.run([
+                                        "python", "single.py", 
+                                        "--bs", bs, 
+                                        "--workers", 4,
+                                        "--epochs", epoch,
+                                        "--port", randint(4444, 8889),
+                                        "--wd", w,
+                                        "--ds", dataset,
+                                        "--model", model,
+                                        "--opt", "lars",
+                                        "--sd", sd
+                                    ])
                 
     elif args.opt == 'tvlars':
         report_temp = os.getcwd() + "/{0}_{1}/tvlars_{2}/{3}_{4}_{5}.parquet"
