@@ -41,11 +41,11 @@ if __name__ == "__main__":
                                     print(f"{filename}: Non-Existed -> Conducted")
                                     subprocess.run([
                                         "python", "single.py", 
-                                        "--bs", bs, 
-                                        "--workers", 4,
-                                        "--epochs", epoch,
-                                        "--port", randint(4444, 8889),
-                                        "--wd", w,
+                                        "--bs", str(bs), 
+                                        "--workers", "4",
+                                        "--epochs", str(epoch),
+                                        "--port", str(randint(4444, 8889)),
+                                        "--wd", str(w),
                                         "--ds", dataset,
                                         "--model", model,
                                         "--opt", "lars",
