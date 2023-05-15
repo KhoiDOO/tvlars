@@ -10,8 +10,6 @@ parser = argparse.ArgumentParser(
 )
 parser.add_argument("--opt", type=str, default='lars', choices=['lars', 'tvlars'],
                     help='Optimizer used in automation experiment')
-parser.add_argument("--debug", action='store_true',
-                    help='Debug Mode')
 
 args = parser.parse_args()
 
@@ -54,7 +52,7 @@ if __name__ == "__main__":
                             for lmd in script["lmbda"][str(bs)]:
                                 for sd in sds:
                                     filepath = report_temp.format(dataset, model, lmd, bs, lr, sd)
-                                    filename = "/".join(filepath.split("/")[-4:])
+                                    filename = "/".join(filepath.split("/")[-3:])
                                     if os.path.exists(filepath):
                                         print(f"{filename}: Existed -> Skipped")
                                     else:
