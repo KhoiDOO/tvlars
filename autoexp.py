@@ -32,14 +32,21 @@ if __name__ == "__main__":
             for model in models:
                 for w in wd:
                     for bs in bss:
-                        for lr in script["non-warm"]["lr"][str(bs)]:
-                            for sd in sds:
-                                filepath = report_temp.format(dataset, model, bs, lr, sd)
-                                filename = "/".join(filepath.split("/")[-3:])
-                                if os.path.exists(filepath):
-                                    print(f"{filename}: Existed -> Skipped")
-                                else:
-                                    print(f"{filename}: Non-Existed -> Conducted")
+                        # for lr in script["non-warm"]["lr"][str(bs)]:
+                        #     for sd in sds:
+                        #         filepath = report_temp.format(dataset, model, bs, lr, sd)
+                        #         filename = "/".join(filepath.split("/")[-3:])
+                        #         if os.path.exists(filepath):
+                        #             print(f"{filename}: Existed -> Skipped")
+                        #         else:
+                        #             print(f"{filename}: Non-Existed -> Conducted")
+                        for lr in script["warm"]["lr"]:
+                            filepath = report_temp.format(dataset, model, bs, lr, "lars-warm")
+                            filename = "/".join(filepath.split("/")[-3:])
+                            if os.path.exists(filepath):
+                                print(f"{filename}: Existed -> Skipped")
+                            else:
+                                print(f"{filename}: Non-Existed -> Conducted")
                 
     elif args.opt == 'tvlars':
         report_temp = os.getcwd() + "/runs/{0}_{1}/tvlars_{2}/{3}_{4}_{5}.parquet"
