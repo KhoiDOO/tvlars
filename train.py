@@ -90,6 +90,15 @@ def main_worker(gpu, args):
     
     # Model 
     model = get_model(model=args.model, num_classes=num_classes).cuda(gpu)
+    if args.opt == "lars":
+        param_weights = []
+        param_biases = []
+        for param in model.parameters():
+            if param.ndim == 1:
+                param_biases.append(param)
+            else:
+                param_weights.append(param)
+        parameters = [{'params': param_weights}, {'params': param_biases}]
     model = DDP(model, device_ids=[gpu])
     
     # Optimizer
@@ -102,7 +111,7 @@ def main_worker(gpu, args):
         )
     elif args.opt == 'lars':
         optimizer = LARS(
-            params=model.parameters(), 
+            params=parameters, 
             weight_decay=args.wd, 
             lr=args.lr, 
             weight_decay_filter=True, 
