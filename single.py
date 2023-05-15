@@ -1,12 +1,6 @@
 import os, sys
 import argparse
 
-import random
-import numpy as np
-import torch
-
-from train import main
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
                     prog='Optimizer BenchMark',
@@ -39,11 +33,20 @@ if __name__ == "__main__":
     parser.add_argument('--lmbda', type=float, default=0.001,
                         help='Delay factor used in TVLARS')
     
+    parser.add_argument('--dv', nargs='+', 
+                        help='List of devices used in training', required=True)
+    
     args = parser.parse_args()
     
+    os.environ["CUDA_VISIBLE_DEVICES"] = ",".join(args.dv)
+    
     if args.seed is not None:
+        import random
+        import numpy as np
+        import torch
         random.seed(args.seed)
         np.random.seed(args.seed)
         torch.manual_seed(args.seed)
     
+    from train import main
     main(args=args)
