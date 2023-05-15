@@ -46,7 +46,7 @@ def main(args: argparse):
     
     # Setup Multi GPU Training
     args.ngpus_per_node = torch.cuda.device_count()
-    args.rank = args.dv_inuse[0]
+    args.rank = 0
     args.dist_url = f'tcp://localhost:{args.port}'
     args.world_size = args.ngpus_per_node
     mp.spawn(main_worker, (args,), args.ngpus_per_node)
