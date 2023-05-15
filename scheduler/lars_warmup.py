@@ -12,5 +12,5 @@ def adjust_learning_rate(args, optimizer, loader, step):
         q = 0.5 * (1 + math.cos(math.pi * step / max_steps))
         end_lr = base_lr * 0.001
         lr = base_lr * q + end_lr * (1 - q)
-    optimizer.param_groups[0]['lr'] = lr * args.learning_rate_weights
-    optimizer.param_groups[1]['lr'] = lr * args.learning_rate_biases
+    optimizer.param_groups[0]['lr'] = lr * args.lr
+    optimizer.param_groups[1]['lr'] = lr * args.lr
