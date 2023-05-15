@@ -33,12 +33,12 @@ if __name__ == "__main__":
     parser.add_argument('--lmbda', type=float, default=0.001,
                         help='Delay factor used in TVLARS')
     
-    parser.add_argument('--dv', nargs='+', 
-                        help='List of devices used in training', required=True)
+    # parser.add_argument('--dv', nargs='+', 
+    #                     help='List of devices used in training', required=True)
     
     args = parser.parse_args()
     
-    os.environ["CUDA_VISIBLE_DEVICES"] = ",".join(args.dv)
+    # os.environ["CUDA_VISIBLE_DEVICES"] = ",".join(args.dv)
     
     if args.seed is not None:
         import random
