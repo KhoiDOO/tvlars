@@ -38,9 +38,6 @@ def folder_setup(args: argparse):
     return opt_dir
 
 def main(args: argparse):
-    # Device Conversion
-    args.dv_inuse = [int(x) for x in args.dv]
-    
     # Setup folder
     args.log_dir = folder_setup(args=args)
     
