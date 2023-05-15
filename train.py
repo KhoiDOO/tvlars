@@ -90,7 +90,7 @@ def main_worker(gpu, args):
     
     # Model 
     model = get_model(model=args.model, num_classes=num_classes).cuda(gpu)
-    if args.opt == "lars":
+    if args.sd == "lars-warm":
         param_weights = []
         param_biases = []
         for param in model.parameters():
