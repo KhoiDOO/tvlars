@@ -164,6 +164,7 @@ cython_debug/
 results/
 clean_report.json
 backup/
+*.zip
 
 # Script Generation
 /*.sh
