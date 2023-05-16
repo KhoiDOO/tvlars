@@ -45,8 +45,8 @@ def main(args: argparse):
     # Setup folder
     args.log_dir = folder_setup(args=args)
     check_log_path = args.log_dir + f"/{args.bs}_{args.lr}_{args.sd}.parquet"
+    filename = "/".join(check_log_path.split("/")[-3:])
     if os.path.exists(check_log_path):
-        filename = "/".join(check_log_path.split("/")[-3:])
         print(f"{filename}: Existed -> Skipped")
         exit(0)
     else:
