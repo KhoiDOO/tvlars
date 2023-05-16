@@ -24,9 +24,7 @@ def get_report_temp(opt_split):
             "lr" : [],
             "sd" : [],
             "max_train_acc" : [],
-            "max_test_acc" : [],
-            "mean_train_acc" : [],
-            "mean_test_acc" : [],
+            "max_test_acc" : []
         }
     elif control == 1:
         return {
@@ -35,9 +33,7 @@ def get_report_temp(opt_split):
             "lr" : [],
             "sd" : [],
             "max_train_acc" : [],
-            "max_test_acc" : [],
-            "mean_train_acc" : [],
-            "mean_test_acc" : [],
+            "max_test_acc" : []
         }
         
 
@@ -97,12 +93,6 @@ if __name__ == "__main__":
                 )
                 log_template["max_test_acc"].append(
                     max(base_test_acc)
-                )
-                log_template["mean_train_acc"].append(
-                    sum(base_train_acc)/len(base_train_acc)
-                )
-                log_template["mean_test_acc"].append(
-                    sum(base_test_acc)/len(base_test_acc)
                 )
             
             base_log_df = pd.DataFrame(log_template).sort_values(by='bs')
