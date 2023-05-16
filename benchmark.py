@@ -23,8 +23,10 @@ def get_report_temp(opt_split):
             "bs" : [],
             "lr" : [],
             "sd" : [],
-            "train_acc" : [],
-            "test_acc" : []
+            "max_train_acc" : [],
+            "max_test_acc" : [],
+            "mean_train_acc" : [],
+            "mean_test_acc" : [],
         }
     elif control == 1:
         return {
@@ -32,8 +34,10 @@ def get_report_temp(opt_split):
             "bs" : [],
             "lr" : [],
             "sd" : [],
-            "train_acc" : [],
-            "test_acc" : []
+            "max_train_acc" : [],
+            "max_test_acc" : [],
+            "mean_train_acc" : [],
+            "mean_test_acc" : [],
         }
         
 
@@ -86,11 +90,19 @@ if __name__ == "__main__":
                 log_template["sd"].append(sd)
                 
                 base_df = pd.read_parquet(log_file)
-                log_template["train_acc"].append(
-                    max(base_df["train_acc"].values.tolist())
+                base_train_acc = base_df["train_acc"].values.tolist()
+                base_test_acc = base_df["test_acc"].values.tolist()
+                log_template["max_train_acc"].append(
+                    max(base_train_acc)
                 )
-                log_template["test_acc"].append(
-                    max(base_df["test_acc"].values.tolist())
+                log_template["max_test_acc"].append(
+                    max(base_test_acc)
+                )
+                log_template["mean_train_acc"].append(
+                    sum(base_train_acc)/len(base_train_acc)
+                )
+                log_template["mean_test_acc"].append(
+                    sum(base_test_acc)/len(base_test_acc)
                 )
             
             base_log_df = pd.DataFrame(log_template).sort_values(by='bs')
