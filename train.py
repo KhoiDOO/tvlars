@@ -49,6 +49,8 @@ def main(args: argparse):
         filename = "/".join(check_log_path.split("/")[-3:])
         print(f"{filename}: Existed -> Skipped")
         exit(0)
+    else:
+        print(f"{filename}: Non-existed -> Conducted")
     
     # Setup Multi GPU Training
     args.ngpus = torch.cuda.device_count()
