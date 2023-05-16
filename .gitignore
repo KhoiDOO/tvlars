@@ -163,6 +163,7 @@ cython_debug/
 *.parquet
 results/
 clean_report.json
+backup/
 
 # Script Generation
 /*.sh
