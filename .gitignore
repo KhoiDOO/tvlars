@@ -167,5 +167,4 @@ backup/
 *.zip
 
 # Script Generation
-/*.sh
 run.sh
