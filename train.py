@@ -200,9 +200,6 @@ def main_worker(gpu, args):
                 log["test_acc"].append(100.*correct/total)   
         
             print(f"Epoch: {epoch} - " + " - ".join([f"{key}: {log[key][epoch]}" for key in log]))
-            # Export every epoch owing to crashed GPU
-            log_df = pd.DataFrame(log)
-            log_df.to_parquet(log_path)
     
     if args.rank == 0:
         log_df = pd.DataFrame(log)
