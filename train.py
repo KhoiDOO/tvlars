@@ -1,9 +1,7 @@
-import os, sys
+import os
 import argparse
 import pandas as pd
-import numpy as np
 from tqdm import tqdm
-from random import randint
 
 import torch
 from torch import nn
