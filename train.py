@@ -39,8 +39,6 @@ def folder_setup(args: argparse):
     return opt_dir
 
 def main(args: argparse):
-    # Evaluating GPU
-    args.eval_gpu = randint(0, torch.cuda.device_count())
     
     # Setup folder
     args.log_dir = folder_setup(args=args)
@@ -68,7 +66,7 @@ def main_worker(gpu, args):
         backend='nccl', init_method=args.dist_url,
         world_size=args.world_size, rank=args.rank)
     
-    if args.rank == args.eval_gpu:
+    if args.rank == 0:
         log = {
             "train_loss" : [],
             "train_acc" : [],
@@ -171,17 +169,17 @@ def main_worker(gpu, args):
             if args.sd == 'cosine':
                 scheduler.step()
             
-            if args.rank == args.eval_gpu:
+            if args.rank == 0:
                 train_loss += loss.item()
                 _, predicted = logits.max(1)
                 total += train_label.size(0)
                 correct += predicted.eq(train_label).sum().item()
         
-        if args.rank == args.eval_gpu:
+        if args.rank == 0:
             log["train_loss"].append(train_loss/(batch_count+1))
             log["train_acc"].append(100.*correct/total)
         
-        if args.rank == args.eval_gpu:
+        if args.rank == 0:
             test_sampler.set_epoch(epoch)
             with torch.no_grad():
                 test_loss = 0
@@ -208,7 +206,7 @@ def main_worker(gpu, args):
             log_df = pd.DataFrame(log)
             log_df.to_parquet(log_path)
     
-    if args.rank == args.eval_gpu:
+    if args.rank == 0:
         log_df = pd.DataFrame(log)
         log_df.to_parquet(log_path)
     
