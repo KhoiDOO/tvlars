@@ -18,6 +18,7 @@ from opt.lars import LARS
 from opt.tvlars import TVLARS
 from opt.clars import CLARS
 from opt.lamb import LAMB
+from opt.khlars import KHLARS
 from scheduler.base import get_sche
 from scheduler.lars_warmup import adjust_learning_rate
 
@@ -121,6 +122,14 @@ def main_worker(gpu, args):
             weight_decay_filter=True, 
             lars_adaptation_filter=True
         )
+    elif args.opt == 'khlars':
+        optimizer = KHLARS(
+            params=model.parameters(), 
+            weight_decay=args.wd, 
+            lr=args.lr, 
+            weight_decay_filter=True, 
+            lars_adaptation_filter=True
+        )
     elif args.opt == 'clars':
         optimizer = CLARS(
             params=parameters, 
@@ -176,7 +185,7 @@ def main_worker(gpu, args):
             loss = criterion(logits, train_label)
             
             optimizer.zero_grad()
-            loss.backward()
+            loss.backward(retain_graph = True if args.opt == 'khlars' else False)
             optimizer.step()
             
             if args.sd == 'cosine':
@@ -220,7 +229,7 @@ def main_worker(gpu, args):
         log_df = pd.DataFrame(log)
         log_df.to_parquet(log_path)
         
-        if args.opt in ['lars', 'tvlars']:
+        if args.opt in ['lars', 'tvlars', 'khlars']:
             ratio_log = optimizer.ratio_log
             
             ratio_log_path = args.log_dir + f"/{args.bs}_{args.lr}_{args.sd}.pickle"
