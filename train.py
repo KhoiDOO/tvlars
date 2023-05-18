@@ -229,10 +229,12 @@ def main_worker(gpu, args):
         log_df = pd.DataFrame(log)
         log_df.to_parquet(log_path)
         
-        if args.opt in ['lars', 'tvlars', 'khlars']:
+        if args.opt in ['lars', 'tvlars', 'khlars', 'clars']:
             ratio_log = optimizer.ratio_log
             
             ratio_log_path = args.log_dir + f"/{args.bs}_{args.lr}_{args.sd}.pickle"
+            
+            print(ratio_log)
             
             with open(ratio_log_path, 'w') as handle:
                 pickle.dump(ratio_log, handle, protocol=pickle.HIGHEST_PROTOCOL)
