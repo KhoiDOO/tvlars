@@ -1,6 +1,7 @@
 import os
 import argparse
 import pandas as pd
+import pickle
 
 import torch
 from torch import nn
@@ -27,7 +28,7 @@ def folder_setup(args: argparse):
     if not os.path.exists(data_model_dir):
         os.mkdir(data_model_dir)
     
-    if args.opt in ['adam', 'adamw', 'adagrad', 'rmsprop', 'lars']:
+    if args.opt in ['adam', 'adamw', 'adagrad', 'rmsprop', 'lars', 'clars', 'khlars', 'lamb']:
         opt_dir = data_model_dir + f"/{args.opt}"
     elif args.opt == 'tvlars':
         opt_dir = data_model_dir + f"/{args.opt}_{args.lmbda}"
@@ -58,8 +59,6 @@ def main(args: argparse):
 
 def main_worker(gpu, args):
     args.rank += gpu
-    
-    print(f"GPU: {gpu} - Integrated - Rank {args.rank}")
     
     dist.init_process_group(
         backend='nccl', init_method=args.dist_url,
@@ -220,5 +219,13 @@ def main_worker(gpu, args):
     if args.rank == 0:
         log_df = pd.DataFrame(log)
         log_df.to_parquet(log_path)
+        
+        if args.opt in ['lars', 'tvlars']:
+            ratio_log = optimizer.ratio_log
+            
+            ratio_log_path = args.log_dir + f"/{args.bs}_{args.lr}_{args.sd}.pickle"
+            
+            with open(ratio_log_path, 'w') as handle:
+                pickle.dump(ratio_log, handle, protocol=pickle.HIGHEST_PROTOCOL)
     
     dist.destroy_process_group()
