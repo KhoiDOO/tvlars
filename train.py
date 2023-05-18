@@ -168,7 +168,7 @@ def main_worker(gpu, args):
         correct = 0
         total = 0
         batch_count = 0
-        for step, (train_img, train_label) in tqdm(enumerate(train_loader, start=epoch * len(train_loader))):
+        for step, (train_img, train_label) in enumerate(train_loader, start=epoch * len(train_loader)):
             if args.sd == 'lars-warm':
                 adjust_learning_rate(args, optimizer, train_loader, step)
             batch_count = step
@@ -201,7 +201,7 @@ def main_worker(gpu, args):
                 correct = 0
                 total = 0
                 batch_count = 0
-                for step, (val_img, val_label) in tqdm(enumerate(test_loader)):
+                for step, (val_img, val_label) in enumerate(test_loader):
                     batch_count = step
                     val_img = val_img.cuda(gpu, non_blocking=True)
                     val_label = val_label.cuda(gpu, non_blocking=True)
