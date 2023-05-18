@@ -11,7 +11,7 @@ class LARS(optim.Optimizer):
                         lars_adaptation_filter=lars_adaptation_filter)
         super().__init__(params, defaults)
         
-        self.step = 0
+        self.step_cnt = 0
         self.ratio_log = {}
 
     def exclude_bias_and_norm(self, p):
@@ -48,5 +48,5 @@ class LARS(optim.Optimizer):
                 mu.mul_(g['momentum']).add_(dp)
 
                 p.add_(mu, alpha=-g['lr'])
-        self.ratio_log[self.step] = lst
-        self.step += 1
+        self.ratio_log[self.step_cnt] = lst
+        self.step_cnt += 1
