@@ -40,14 +40,8 @@ if __name__ == "__main__":
                 for model in models:
                     for w in wd:
                         for bs in bss:
-                            # for lr in script["non-warm"]["lr"][str(bs)]:
-                            #     for sd in sds:
-                            #         filepath = report_temp.format(dataset, model, bs, lr, sd)
-                            #         filename = "/".join(filepath.split("/")[-3:])
-                            #         if os.path.exists(filepath):
-                            #             print(f"{filename}: Existed -> Skipped")
-                            #         else:
-                            #             print(f"{filename}: Non-Existed -> Conducted")
+                            for lr in script_data["non-warm"]["lr"][str(bs)]:
+                                cmd_lst.append(f"python main.py --bs {bs} --epochs 100 --lr {lr} --port {randint(3333, 8889)} --wd {w} --ds {dataset} --model {model} --opt lars --sd None --dv {available_device}\n")
                             for lr in script_data["warm"]["lr"]:
                                 cmd_lst.append(f"python main.py --bs {bs} --epochs 100 --lr {lr} --port {randint(3333, 8889)} --wd {w} --ds {dataset} --model {model} --opt lars --sd 'lars-warm' --dv {available_device}\n")
         
