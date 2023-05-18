@@ -34,7 +34,7 @@ class TVLARS(optim.Optimizer):
                     one = torch.ones_like(param_norm)
                     ratio = g['eta'] * torch.pow(
                                                 torch.exp(
-                                                    g['lmbda'] * torch.FloatTensor([self.epoch_cnt + 1])
+                                                    g['lmbda'] * torch.FloatTensor([self.step + 1])
                                                     )[0], -1
                                                 ) * param_norm / update_norm
                     q = torch.where(param_norm > 0.,
