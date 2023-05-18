@@ -30,7 +30,7 @@ class CLARS(optim.Optimizer):
 
                 if not g['lars_adaptation_filter'] or not self.exclude_bias_and_norm(p):
                     param_norm = torch.norm(p)
-                    update_norm = torch.mean(torch.norm(dp)) 
+                    update_norm = torch.mean(dp.data.pow(2).sum()) 
                     one = torch.ones_like(param_norm)
                     ratio = g['eta'] * param_norm / update_norm
                     q = torch.where(param_norm > 0.,
