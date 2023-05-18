@@ -9,13 +9,15 @@ class TVLARS(optim.Optimizer):
                         lars_adaptation_filter=lars_adaptation_filter, lmbda=lmbda)
         super().__init__(params, defaults)
         
-        self.epoch_cnt = 0
+        self.step = 0
+        self.ratio_log = {}
 
     def exclude_bias_and_norm(self, p):
         return p.ndim == 1
 
     @torch.no_grad()
     def step(self):
+        lst = []
         for g in self.param_groups:
             for p in g['params']:
                 dp = p.grad
@@ -30,22 +32,23 @@ class TVLARS(optim.Optimizer):
                     param_norm = torch.norm(p)
                     update_norm = torch.norm(dp)
                     one = torch.ones_like(param_norm)
+                    ratio = g['eta'] * torch.pow(
+                                                torch.exp(
+                                                    g['lmbda'] * torch.FloatTensor([self.epoch_cnt + 1])
+                                                    )[0], -1
+                                                ) * param_norm / update_norm
                     q = torch.where(param_norm > 0.,
                                     torch.where(update_norm > 0,
-                                                (
-                                                    g['eta'] * torch.pow(
-                                                        torch.exp(
-                                                            g['lmbda'] * torch.FloatTensor([self.epoch_cnt + 1])
-                                                            )[0], -1
-                                                        ) * param_norm / update_norm), one), one)
+                                                (ratio), one), one)
                     dp = dp.mul(q)
+                    lst.append(ratio)
 
                 param_state = self.state[p]
                 if 'mu' not in param_state:
                     param_state['mu'] = torch.zeros_like(p)
                 mu = param_state['mu']
                 mu.mul_(g['momentum']).add_(dp)
-
                 p.add_(mu, alpha=-g['lr'])
 
-        self.epoch_cnt += 1
+        self.ratio_log[self.step] = lst
+        self.step += 1
