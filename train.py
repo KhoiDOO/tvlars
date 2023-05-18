@@ -16,6 +16,7 @@ from model.base import get_model
 from opt.base import get_opt
 from opt.lars import LARS
 from opt.tvlars import TVLARS
+from opt.clars import CLARS
 from scheduler.base import get_sche
 from scheduler.lars_warmup import adjust_learning_rate
 
@@ -115,6 +116,14 @@ def main_worker(gpu, args):
         )
     elif args.opt == 'lars':
         optimizer = LARS(
+            params=parameters, 
+            weight_decay=args.wd, 
+            lr=args.lr, 
+            weight_decay_filter=True, 
+            lars_adaptation_filter=True
+        )
+    elif args.opt == 'clars':
+        optimizer = CLARS(
             params=parameters, 
             weight_decay=args.wd, 
             lr=args.lr, 
