@@ -234,9 +234,7 @@ def main_worker(gpu, args):
             
             ratio_log_path = args.log_dir + f"/{args.bs}_{args.lr}_{args.sd}.pickle"
             
-            print(ratio_log)
-            
-            with open(ratio_log_path, 'w') as handle:
+            with open(ratio_log_path, 'wb') as handle:
                 pickle.dump(ratio_log, handle)
     
     dist.destroy_process_group()
