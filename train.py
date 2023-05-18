@@ -237,6 +237,6 @@ def main_worker(gpu, args):
             print(ratio_log)
             
             with open(ratio_log_path, 'w') as handle:
-                pickle.dump(ratio_log, handle, protocol=pickle.HIGHEST_PROTOCOL)
+                pickle.dump(ratio_log, handle)
     
     dist.destroy_process_group()
