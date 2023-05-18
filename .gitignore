@@ -162,6 +162,7 @@ cython_debug/
 # Logging Folders/Files
 *.parquet
 results/
+result_plot/
 clean_report.json
 backup/
 *.zip
