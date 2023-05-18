@@ -1,7 +1,6 @@
 import os
 import argparse
 import pandas as pd
-from tqdm import tqdm
 
 import torch
 from torch import nn
