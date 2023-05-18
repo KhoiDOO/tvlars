@@ -41,7 +41,7 @@ class TVLARS(optim.Optimizer):
                                     torch.where(update_norm > 0,
                                                 (ratio), one), one)
                     dp = dp.mul(q)
-                    lst.append(ratio)
+                    lst.append(ratio.item())
 
                 param_state = self.state[p]
                 if 'mu' not in param_state:
