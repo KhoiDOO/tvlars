@@ -1,3 +1,5 @@
+# Source: https://github.com/facebookresearch/barlowtwins
+
 import torch
 from torch import optim
 
