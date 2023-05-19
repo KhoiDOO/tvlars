@@ -83,7 +83,7 @@ class KHLARS(optim.Optimizer):
                     else:
                         hessian_norm = 1
                     one = torch.ones_like(param_norm)
-                    ratio = g['eta'] * param_norm / (update_norm * hessian_norm)
+                    ratio = g['eta'] * param_norm * hessian_norm / update_norm
                     q = torch.where(param_norm > 0.,
                                     torch.where(update_norm > 0,
                                                 (ratio), one), one)
