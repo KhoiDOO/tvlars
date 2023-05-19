@@ -75,7 +75,11 @@ class KHLARS(optim.Optimizer):
                 if not g['lars_adaptation_filter'] or not self.exclude_bias_and_norm(p):
                     param_norm = torch.norm(p)
                     update_norm = torch.norm(dp)
-                    hessian_norm = torch.norm(hp) if not isinstance(hp, float) else hp
+                    if hp is not None:
+                        hessian_norm = torch.norm(hp) if not isinstance(hp, float) else hp
+                        print(hessian_norm)
+                    else:
+                        hessian_norm = 1
                     one = torch.ones_like(param_norm)
                     ratio = g['eta'] * param_norm / (update_norm * hessian_norm)
                     q = torch.where(param_norm > 0.,
