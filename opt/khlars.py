@@ -4,7 +4,8 @@ from torch.optim import Optimizer
 
 class KHLARS(optim.Optimizer):
     def __init__(self, params, lr, weight_decay=5e-4, momentum=0.9, eta=0.001,
-                 weight_decay_filter=False, lars_adaptation_filter=False, update_each = 1):
+                 weight_decay_filter=False, lars_adaptation_filter=False, 
+                 update_each = 1, n_samples=1):
         defaults = dict(lr=lr, weight_decay=weight_decay, momentum=momentum,
                         eta=eta, weight_decay_filter=weight_decay_filter,
                         lars_adaptation_filter=lars_adaptation_filter)
@@ -13,6 +14,7 @@ class KHLARS(optim.Optimizer):
         self.step_cnt = 0
         self.ratio_log = {}
         self.update_each = update_each
+        self.n_samples = n_samples
         self.generator = torch.Generator().manual_seed(2147483647)
         
         for p in self.get_params():
