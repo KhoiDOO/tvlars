@@ -33,12 +33,15 @@ if __name__ == "__main__":
     parser.add_argument('--lmbda', type=float, default=0.001,
                         help='Delay factor used in TVLARS')
     
-    parser.add_argument('--dv', nargs='+', 
+    parser.add_argument('--dv', nargs='+', default=-1,
                         help='List of devices used in training', required=True)
     
     args = parser.parse_args()
     
-    os.environ["CUDA_VISIBLE_DEVICES"] = ",".join(args.dv)
+    if args.dv != -1:
+        os.environ["CUDA_VISIBLE_DEVICES"] = ",".join(args.dv)
+    else:
+        print("All GPU in use")
     
     if args.seed is not None:
         import random
