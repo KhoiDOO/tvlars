@@ -187,7 +187,7 @@ def main_worker(gpu, args):
             
             optimizer.zero_grad()
             loss.backward(
-                # retain_graph = True if args.opt == 'khlars' else False
+                retain_graph = True if args.opt == 'khlars' else False
             )
             optimizer.step()
             
