@@ -32,7 +32,7 @@ class KHLARS(optim.Optimizer):
     @torch.no_grad()
     def set_hessian(self):
         params = []
-        for p in filter(lambda p: p.grad is not None, self.get_params()):
+        for p in filter(lambda p: p.grad is not None and p.grad.grad_fn is not None, self.get_params()):
             if self.state[p]["hessian step"] % self.update_each == 0:  # compute the trace only each `update_each` step
                 params.append(p)
             self.state[p]["hessian step"] += 1
