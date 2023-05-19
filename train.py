@@ -54,6 +54,7 @@ def main(args: argparse):
     
     # Setup Multi GPU Training
     args.ngpus = torch.cuda.device_count()
+    print(f"GPU count: {args.ngpus}")
     args.rank = 0
     args.dist_url = f'tcp://localhost:{args.port}'
     args.world_size = args.ngpus
@@ -83,8 +84,8 @@ def main_worker(gpu, args):
     num_classes, train_dataset, test_dataset = get_dataset(dataset_name=args.ds)
     
     assert args.bs % args.world_size == 0
-    train_sampler = DistributedSampler(train_dataset)
-    test_sampler = DistributedSampler(test_dataset)
+    train_sampler = DistributedSampler(train_dataset) if args.opt != 'khlars' else None
+    test_sampler = DistributedSampler(test_dataset) if args.opt != 'khlars' else None
     per_device_batch_size = args.bs // args.world_size
 
     train_loader = DataLoader(
