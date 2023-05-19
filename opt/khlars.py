@@ -13,6 +13,7 @@ class KHLARS(optim.Optimizer):
         
         self.step_cnt = 0
         self.ratio_log = {}
+        self.hessian_log = {}
         self.update_each = update_each
         self.n_samples = n_samples
         self.generator = torch.Generator().manual_seed(2147483647)
@@ -61,6 +62,7 @@ class KHLARS(optim.Optimizer):
         self.set_hessian()
         
         lst = []
+        hess_lst = []
         for g in self.param_groups:
             for p in g['params']:
                 dp = p.grad
@@ -76,8 +78,8 @@ class KHLARS(optim.Optimizer):
                     param_norm = torch.norm(p)
                     update_norm = torch.norm(dp)
                     if hp is not None:
-                        hessian_norm = torch.norm(hp) if not isinstance(hp, float) else hp
-                        print(hessian_norm)
+                        hessian_norm = torch.norm(hp) if not isinstance(hp, float) else hp 
+                        hess_lst.append(hessian_norm.item())                       
                     else:
                         hessian_norm = 1
                     one = torch.ones_like(param_norm)
@@ -96,5 +98,6 @@ class KHLARS(optim.Optimizer):
 
                 p.add_(mu, alpha=-g['lr'])
         self.ratio_log[self.step_cnt] = lst
+        self.hessian_log[self.step_cnt] = hess_lst
         self.step_cnt += 1
     
