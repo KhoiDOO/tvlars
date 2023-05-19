@@ -13,6 +13,13 @@ class KHLARS(optim.Optimizer):
         self.step_cnt = 0
         self.ratio_log = {}
         
+        for p in self.get_params():
+            p.hess = 0.0
+            self.state[p]["hessian step"] = 0
+        
+    def get_params(self):
+        return (p for group in self.param_groups for p in group['params'] if p.requires_grad)
+        
     def zero_hessian(self):
         for p in self.get_params():
             if not isinstance(p.hess, float) and self.state[p]["hessian step"] % self.update_each == 0:
