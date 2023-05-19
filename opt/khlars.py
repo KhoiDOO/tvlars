@@ -22,7 +22,7 @@ class KHLARS(optim.Optimizer):
             self.state[p]["hessian step"] = 0
         
     def get_params(self):
-        return (p for group in self.param_groups for p in group['params'] if p.requires_grad)
+        return (p for group in self.param_groups for p in group['params'] if p.requires_grad == True)
         
     def zero_hessian(self):
         for p in self.get_params():
@@ -43,7 +43,7 @@ class KHLARS(optim.Optimizer):
         if self.generator.device != params[0].device:  # hackish way of casting the generator to the right device
             self.generator = torch.Generator(params[0].device).manual_seed(2147483647)
 
-        grads = [p.grad for p in params if p.grad is not None]
+        grads = [p.grad for p in params]
 
         for i in range(self.n_samples):
             zs = [torch.randint(0, 2, p.size(), generator=self.generator, device=p.device) * 2.0 - 1.0 for p in params]  # Rademacher distribution {-1.0, 1.0}
