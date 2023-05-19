@@ -248,5 +248,12 @@ def main_worker(gpu, args):
             
             with open(ratio_log_path, 'wb') as handle:
                 pickle.dump(ratio_log, handle)
+                
+            if args.opt == 'khlars':
+                hessian_log = optimizer.hessian_log
+                hessian_log_path = args.log_dir + f"/hessian_{args.bs}_{args.lr}_{args.sd}.pickle"
+                
+                with open(hessian_log_path, 'wb') as handle:
+                    pickle.dump(hessian_log, handle)
     
     dist.destroy_process_group()
