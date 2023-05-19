@@ -13,6 +13,7 @@ class KHLARS(optim.Optimizer):
         self.step_cnt = 0
         self.ratio_log = {}
         self.update_each = update_each
+        self.generator = torch.Generator().manual_seed(2147483647)
         
         for p in self.get_params():
             p.hess = 0.0
@@ -28,10 +29,6 @@ class KHLARS(optim.Optimizer):
 
     @torch.no_grad()
     def set_hessian(self):
-        """
-        Computes the Hutchinson approximation of the hessian trace and accumulates it for each trainable parameter.
-        """
-
         params = []
         for p in filter(lambda p: p.grad is not None, self.get_params()):
             if self.state[p]["hessian step"] % self.update_each == 0:  # compute the trace only each `update_each` step
