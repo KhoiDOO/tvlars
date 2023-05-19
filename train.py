@@ -110,7 +110,7 @@ def main_worker(gpu, args):
             else:
                 param_weights.append(param)
         parameters = [{'params': param_weights}, {'params': param_biases}]
-    if args.opt == 'khlars':
+    if args.opt != 'khlars':
         model = DDP(model, device_ids=[gpu])
     
     # Optimizer
