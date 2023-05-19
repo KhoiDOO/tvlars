@@ -54,10 +54,14 @@ def main(args: argparse):
     
     # Setup Multi GPU Training
     args.ngpus = torch.cuda.device_count()
-    print(f"GPU count: {args.ngpus}")
     args.rank = 0
     args.dist_url = f'tcp://localhost:{args.port}'
     args.world_size = args.ngpus
+    
+    print(f"GPU count: {args.ngpus}")
+    print(f"dist_url: {args.dist_url}")
+    print(f"world size: {args.world_size}")
+    
     mp.spawn(main_worker, (args,), args.ngpus)
 
 def main_worker(gpu, args):
@@ -106,7 +110,8 @@ def main_worker(gpu, args):
             else:
                 param_weights.append(param)
         parameters = [{'params': param_weights}, {'params': param_biases}]
-    model = DDP(model, device_ids=[gpu])
+    if args.opt == 'khlars':
+        model = DDP(model, device_ids=[gpu])
     
     # Optimizer
     if args.opt not in ['lars', 'tvlars', 'khlars']:
