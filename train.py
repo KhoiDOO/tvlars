@@ -185,7 +185,9 @@ def main_worker(gpu, args):
             loss = criterion(logits, train_label)
             
             optimizer.zero_grad()
-            loss.backward(retain_graph = True if args.opt == 'khlars' else False)
+            loss.backward(
+                # retain_graph = True if args.opt == 'khlars' else False
+            )
             optimizer.step()
             
             if args.sd == 'cosine':
