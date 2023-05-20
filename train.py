@@ -156,7 +156,7 @@ def main_worker(gpu, args):
         )
     elif args.opt == 'lamb':
         optimizer = LAMB(
-            params=model.parameters,
+            params=model.parameters(),
             lr = args.lr,
             weight_decay=args.wd,
             adam=True
