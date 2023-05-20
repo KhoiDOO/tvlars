@@ -114,7 +114,7 @@ def main_worker(gpu, args):
         model = DDP(model, device_ids=[gpu])
     
     # Optimizer
-    if args.opt not in ['lars', 'tvlars', 'khlars']:
+    if args.opt not in ['lars', 'tvlars', 'khlars', 'lamb', 'clars']:
         optimizer = get_opt(
             opt_name=args.opt,
             params=model.parameters(),
