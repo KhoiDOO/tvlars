@@ -12,14 +12,9 @@ from torch.nn.parallel import DistributedDataParallel as DDP
 from torch.utils.data.distributed import DistributedSampler
 from torch.utils.data import DataLoader
 
-from dataset.bench import get_dataset
+from dataset import *
 from model.base import get_model
-from opt.base import get_opt
-from opt.lars import LARS
-from opt.tvlars import TVLARS
-from opt.clars import CLARS
-from opt.lamb import LAMB
-from opt.khlars import KHLARS
+from opt import *
 from scheduler.base import get_sche
 from scheduler.lars_warmup import adjust_learning_rate
 
@@ -45,8 +40,9 @@ def main(args: argparse):
     # Setup folder
     args.log_dir = folder_setup(args=args)
     check_log_path = args.log_dir + f"/{args.bs}_{args.lr}_{args.sd}.parquet"
-    filename = "/".join(check_log_path.split("/")[-3:])
-    if os.path.exists(check_log_path):
+    check_ratio_path = args.log_dir + f"/{args.bs}_{args.lr}_{args.sd}.pickle"
+    filename = "/".join(check_log_path.split("/")[-3:]).replace('parquet', '')
+    if os.path.exists(check_log_path) and os.path.exists(check_ratio_path):
         print(f"{filename}: Existed -> Skipped")
         exit(0)
     else:
