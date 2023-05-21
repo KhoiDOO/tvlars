@@ -166,6 +166,7 @@ result_plot/
 clean_report.json
 backup/
 *.zip
+*.pickle
 
 # Script Generation
 run.sh
