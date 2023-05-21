@@ -37,6 +37,8 @@ class LAMB(Optimizer):
         defaults = dict(lr=lr, betas=betas, eps=eps,
                         weight_decay=weight_decay)
         self.adam = adam
+        self.step_cnt = 0
+        self.ratio_log = {}
         super(LAMB, self).__init__(params, defaults)
 
     def step(self, closure=None):
@@ -49,7 +51,7 @@ class LAMB(Optimizer):
         loss = None
         if closure is not None:
             loss = closure()
-
+        lst = []
         for group in self.param_groups:
             for p in group['params']:
                 if p.grad is None:
@@ -96,6 +98,7 @@ class LAMB(Optimizer):
                     trust_ratio = 1
                 else:
                     trust_ratio = weight_norm / adam_norm
+                lst.append(trust_ratio.item())
                 state['weight_norm'] = weight_norm
                 state['adam_norm'] = adam_norm
                 state['trust_ratio'] = trust_ratio
@@ -104,4 +107,6 @@ class LAMB(Optimizer):
 
                 p.data.add_(adam_step, alpha=-step_size * trust_ratio)
 
+        self.ratio_log[self.step_cnt] = lst
+        self.step_cnt += 1
         return loss
