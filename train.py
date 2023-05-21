@@ -241,7 +241,7 @@ def main_worker(gpu, args):
         log_df = pd.DataFrame(log)
         log_df.to_parquet(log_path)
         
-        if args.opt in ['lars', 'tvlars', 'khlars', 'clars']:
+        if args.opt in ['lars', 'tvlars', 'khlars', 'clars', 'lamb']:
             ratio_log = optimizer.ratio_log
             
             ratio_log_path = args.log_dir + f"/{args.bs}_{args.lr}_{args.sd}.pickle"
