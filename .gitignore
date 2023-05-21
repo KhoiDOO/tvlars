@@ -169,3 +169,5 @@ backup/
 
 # Script Generation
 run.sh
+run_lars.sh
+run_tvlars.sh
