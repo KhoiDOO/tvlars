@@ -11,7 +11,7 @@ class BTLoss(nn.Module):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
     
-    def forward(self, z1, z2):
+    def forward(self, z1, z2) -> torch.Tensor:
         # empirical cross-correlation matrix
         c = self.bn(z1).T @ self.bn(z2)
 

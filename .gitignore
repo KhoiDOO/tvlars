@@ -167,6 +167,7 @@ clean_report.json
 backup/
 *.zip
 *.pickle
+*.csv
 
 # Script Generation
 run.sh

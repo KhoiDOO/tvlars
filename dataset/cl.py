@@ -26,7 +26,7 @@ class Solarization(object):
             return img
 
 
-class Transform:
+class CLTransform:
     def __init__(self):
         self.transform = transforms.Compose([
             transforms.RandomResizedCrop(224, interpolation=Image.BICUBIC),
@@ -63,3 +63,19 @@ class Transform:
         y1 = self.transform(x)
         y2 = self.transform_prime(x)
         return y1, y2
+
+def cl_train_transform(size = None):
+    return transforms.Compose([
+        transforms.RandomResizedCrop(size if size is not None else 224),
+        transforms.RandomHorizontalFlip(),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+    ])
+
+def cl_valid_transform(size = None):
+    return transforms.Compose([
+            transforms.RandomResizedCrop(size if size is not None else 224),
+            transforms.RandomHorizontalFlip(),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+        ])
