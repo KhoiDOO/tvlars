@@ -184,8 +184,7 @@ def main_worker(gpu, args):
             if args.sd == 'lars-warm':
                 adjust_learning_rate(args, optimizer, train_loader, step)
             batch_count = step
-            train_img = train_img.cuda(gpu, non_blocking=True)
-            e1, e2 = model(img1), model(img2)
+            e1, e2 = model(img1.cuda(gpu, non_blocking=True)), model(img2.cuda(gpu, non_blocking=True))
             loss = BTLoss(bt_lambd=args.btlmbda)(e1, e2)
             
             optimizer.zero_grad()
