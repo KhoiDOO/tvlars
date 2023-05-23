@@ -185,7 +185,7 @@ def main_worker(gpu, args):
                 adjust_learning_rate(args, optimizer, train_loader, step)
             batch_count = step
             e1, e2 = model(img1.cuda(gpu, non_blocking=True)), model(img2.cuda(gpu, non_blocking=True))
-            loss = BTLoss(bt_lambd=args.btlmbda)(e1, e2)
+            loss = BTLoss(vars(args))(e1, e2)
             
             optimizer.zero_grad()
             loss.backward(
