@@ -8,9 +8,11 @@ def off_diagonal(x):
     return x.flatten()[:-1].view(n - 1, n + 1)[:, 1:].flatten()
 
 class BTLoss(nn.Module):
-    def __init__(self, bt_lambd = 0.005, *args, **kwargs) -> None:
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.bt_lambd = bt_lambd
+        self.bt_lambd = kwargs['btlmbda']
+        self.vs = kwargs['vs']
+        self.bn = nn.BatchNorm1d(self.vs, affine=False)
     
     def forward(self, z1, z2) -> torch.Tensor:
         # empirical cross-correlation matrix
