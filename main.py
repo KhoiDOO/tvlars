@@ -46,6 +46,8 @@ if __name__ == "__main__":
                         help='Vector size')
     parser.add_argument('--lr_classifier', type=float, default=0.3,    
                         help='classifier learning rate')
+    parser.add_argument('--lr_backbone', type=float, default=0,    
+                        help='backbone learning rate')
     
     # MODE
     parser.add_argument('--mode', type=str, default='clf', choices=['clf', 'bt'],
