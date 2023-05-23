@@ -18,6 +18,7 @@ from opt import *
 from loss import BTLoss
 from scheduler.base import get_sche
 from scheduler.lars_warmup import adjust_learning_rate
+from metric import accuracy
 
 def folder_setup(args: argparse):
     runs_dir = os.getcwd() + "/cl_runs"
@@ -70,10 +71,13 @@ def main_worker(gpu, args):
     
     if args.rank == 0:
         log = {
+            "cl_loss" : [],
             "train_loss" : [],
-            "train_acc" : [],
+            "train_acc_1" : [],
+            "train_acc_5" : [],
             "test_loss" : [],
-            "test_acc" : []
+            "test_acc_1" : [],
+            "test_acc_5" : []
         }
         
         log_path = args.log_dir + f"/{args.bs}_{args.lr}_{args.sd}.parquet"
@@ -89,7 +93,6 @@ def main_worker(gpu, args):
     
     assert args.bs % args.world_size == 0
     train_sampler = DistributedSampler(train_dataset) if args.opt != 'khlars' else None
-    test_sampler = DistributedSampler(test_dataset) if args.opt != 'khlars' else None
     per_device_batch_size = args.bs // args.world_size
 
     train_loader = DataLoader(
@@ -169,13 +172,11 @@ def main_worker(gpu, args):
             T_max=args.epochs
         )
     
-    # Training and Evaluation
+    # Training Constrastive Learning
     for epoch in range(args.epochs):
         if args.opt != 'khlars':
             train_sampler.set_epoch(epoch)
         train_loss = 0
-        correct = 0
-        total = 0
         batch_count = 0
         for step, (img1, img2) in tqdm(enumerate(train_loader, start=epoch * len(train_loader))):
             if args.sd == 'lars-warm':
@@ -183,7 +184,7 @@ def main_worker(gpu, args):
             batch_count = step
             train_img = train_img.cuda(gpu, non_blocking=True)
             e1, e2 = model(img1), model(img2)
-            loss = BTLoss()(e1, e2)
+            loss = BTLoss(bt_lambd=args.btlmbda)(e1, e2)
             
             optimizer.zero_grad()
             loss.backward(
@@ -199,16 +200,96 @@ def main_worker(gpu, args):
                 train_loss += loss.item()
         
         if args.rank == 0:
+            log["cl_loss"].append(train_loss/(batch_count+1))
+            curr_loss = log["cl_loss"][-1]
+            print(f"Epoch: {epoch} - CL Loss: {curr_loss}")
+    
+    # Training Classification
+    
+    # resetup model
+    model.ffc = nn.Linear(args.vs, num_classes)
+    model.ffc.weight.data.normal_(mean=0.0, std=0.01)
+    model.ffc.bias.data.zero_()
+    model.requires_grad_(False)
+    model.ffc.requires_grad_(True)   
+    classifier_parameters, model_parameters = [], []
+    for name, param in model.named_parameters():
+        if name in {'fcc.weight', 'fcc.bias'}:
+            classifier_parameters.append(param)
+        else:
+            model_parameters.append(param) 
+    if args.opt != 'kh_lars':
+        model = DDP(model, device_ids=[gpu])
+        
+    param_groups = [dict(params=classifier_parameters, lr=args.lr_classifier)]
+    if args.weights == 'finetune':
+        param_groups.append(dict(params=model_parameters, lr=args.lr_backbone))
+    optimizer = torch.optim.SGD(param_groups, 0, momentum=0.9, weight_decay=args.weight_decay)
+    clf_scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, args.epochs)
+    
+    # resetup data set
+    num_classes, train_dataset, test_dataset = get_dataset(
+        dataset_name=args.ds,
+        train_transform=cl_train_transform(size=data_map[args.ds]["img_size"]),
+        test_transform=cl_test_transform(size=data_map[args.ds]["img_size"])
+    )
+    
+    assert args.bs % args.world_size == 0
+    train_sampler = DistributedSampler(train_dataset) if args.opt != 'khlars' else None
+    test_sampler = DistributedSampler(test_dataset) if args.opt != 'khlars' else None
+    per_device_batch_size = args.bs // args.world_size
+
+    train_loader = DataLoader(
+        dataset=train_dataset, batch_size=per_device_batch_size, num_workers=args.workers, pin_memory=True, sampler=train_sampler
+    )
+    test_loader = DataLoader(
+        dataset=test_dataset, batch_size=per_device_batch_size, num_workers=args.workers, pin_memory=True, sampler=test_sampler
+    )
+    
+    # Loss Function
+    criterion = nn.CrossEntropyLoss()
+    
+    # CLF train 
+    for epoch in range(args.epochs):
+        if args.opt != 'khlars':
+            train_sampler.set_epoch(epoch)
+        train_loss = 0
+        train_acc_1 = 0
+        train_acc_5 = 0
+        batch_count = 0
+        for step, (train_img, train_label) in tqdm(enumerate(train_loader, start=epoch * len(train_loader))):
+            batch_count = step
+            train_img = train_img.cuda(gpu, non_blocking=True)
+            train_label = train_label.cuda(gpu, non_blocking=True)
+            logits = model(train_img)
+            loss = criterion(logits, train_label)
+            acc1, acc5 = accuracy(logits, train_label, topk=(1, 5))
+            
+            optimizer.zero_grad()
+            loss.backward(
+                retain_graph = True if args.opt == 'khlars' else False,
+                create_graph = True if args.opt == 'khlars' else False
+            )
+            optimizer.step()
+            clf_scheduler.step()
+            
+            if args.rank == 0:
+                train_loss += loss.item()
+                train_acc_1 += acc1.item()
+                train_acc_5 += acc5.item()
+        
+        if args.rank == 0:
             log["train_loss"].append(train_loss/(batch_count+1))
-            log["train_acc"].append(100.*correct/total)
+            log["train_acc_1"].append(100.*(train_acc_1/(batch_count+1)))
+            log["train_acc_5"].append(100.*(train_acc_5/(batch_count+1)))
         
         if args.rank == 0:
             if args.opt != 'khlars':
                 test_sampler.set_epoch(epoch)
             with torch.no_grad():
                 test_loss = 0
-                correct = 0
-                total = 0
+                test_acc_1 = 0
+                test_acc_5 = 0
                 batch_count = 0
                 for step, (val_img, val_label) in tqdm(enumerate(test_loader)):
                     batch_count = step
@@ -216,14 +297,15 @@ def main_worker(gpu, args):
                     val_label = val_label.cuda(gpu, non_blocking=True)
                     logits = model(val_img)
                     loss = criterion(logits, val_label)
+                    acc1, acc5 = accuracy(logits, val_label, topk=(1, 5))
                 
                     test_loss += loss.item()
-                    _, predicted = logits.max(1)
-                    total += val_label.size(0)
-                    correct += predicted.eq(val_label).sum().item()
+                    test_acc_1 += acc1.item()
+                    test_acc_5 += acc5.item()
                 
                 log["test_loss"].append(test_loss/(batch_count+1))
-                log["test_acc"].append(100.*correct/total)   
+                log["test_acc_1"].append(100.*(test_acc_1/(batch_count+1)))
+                log["test_acc_5"].append(100.*(test_acc_1/(batch_count+1)))  
         
             print(f"Epoch: {epoch} - " + " - ".join([f"{key}: {log[key][epoch]}" for key in log]))
     
