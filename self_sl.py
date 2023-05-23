@@ -180,17 +180,21 @@ def main_worker(gpu, args):
     # Training Classification
     
     # resetup model
-    model.ffc = nn.Linear(args.vs, num_classes).cuda(gpu)
-    model.ffc.weight.data.normal_(mean=0.0, std=0.01)
-    model.ffc.bias.data.zero_()
+    clf_model = get_model(model=args.model, num_classes=args.vs).cuda(gpu)
+    clf_model.load_state_dict(model.state_dict())
+    clf_model.ffc = nn.Linear(args.vs, num_classes).cuda(gpu)
+    clf_model.ffc.weight.data.normal_(mean=0.0, std=0.01)
+    clf_model.ffc.bias.data.zero_()
     # model.requires_grad_(False)
     # model.ffc.requires_grad_(True)   
     classifier_parameters, model_parameters = [], []
-    for name, param in model.named_parameters():
+    for name, param in clf_model.named_parameters():
         if name in {'fcc.weight', 'fcc.bias'}:
             classifier_parameters.append(param)
         else:
             model_parameters.append(param)
+    clf_model = DDP(clf_model, device_ids=[gpu])
+    del model
         
     param_groups = [dict(params=classifier_parameters, lr=args.lr_classifier)]
     param_groups.append(dict(params=model_parameters, lr=args.lr_backbone))
@@ -231,7 +235,7 @@ def main_worker(gpu, args):
             batch_count = step
             train_img = train_img.cuda(gpu, non_blocking=True)
             train_label = train_label.cuda(gpu, non_blocking=True)
-            logits = model(train_img)
+            logits = clf_model(train_img)
             loss = criterion(logits, train_label)
             acc1, acc5 = accuracy(logits, train_label, topk=(1, 5))
             
@@ -265,7 +269,7 @@ def main_worker(gpu, args):
                     batch_count = step
                     val_img = val_img.cuda(gpu, non_blocking=True)
                     val_label = val_label.cuda(gpu, non_blocking=True)
-                    logits = model(val_img)
+                    logits = clf_model(val_img)
                     loss = criterion(logits, val_label)
                     acc1, acc5 = accuracy(logits, val_label, topk=(1, 5))
                 

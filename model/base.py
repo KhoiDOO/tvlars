@@ -8,7 +8,7 @@ model_map = {
     'effb0' : models.efficientnet_b0
 }
 
-def get_model(model:str, num_classes:int):
+def get_model(model:str, num_classes:int) -> nn.Module:
     if model not in list(model_map.keys()):
         raise Exception(f'the model {model} is current not supported')
     
