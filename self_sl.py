@@ -180,7 +180,7 @@ def main_worker(gpu, args):
             train_sampler.set_epoch(epoch)
         train_loss = 0
         batch_count = 0
-        for step, (img1, img2) in tqdm(enumerate(train_loader, start=epoch * len(train_loader))):
+        for step, ((img1, img2), _) in tqdm(enumerate(train_loader, start=epoch * len(train_loader))):
             if args.sd == 'lars-warm':
                 adjust_learning_rate(args, optimizer, train_loader, step)
             batch_count = step
