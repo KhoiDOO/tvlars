@@ -190,11 +190,11 @@ def main_worker(gpu, args):
         if name in {'fcc.weight', 'fcc.bias'}:
             classifier_parameters.append(param)
         else:
-            model_parameters.append(param) 
+            model_parameters.append(param)
         
     param_groups = [dict(params=classifier_parameters, lr=args.lr_classifier)]
     param_groups.append(dict(params=model_parameters, lr=args.lr_backbone))
-    optimizer = torch.optim.SGD(param_groups, 0, momentum=0.9, weight_decay=args.wd)
+    clf_optimizer = torch.optim.SGD(param_groups, 0, momentum=0.9, weight_decay=args.wd)
     clf_scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, args.epochs)
     
     # resetup data set
@@ -235,12 +235,12 @@ def main_worker(gpu, args):
             loss = criterion(logits, train_label)
             acc1, acc5 = accuracy(logits, train_label, topk=(1, 5))
             
-            optimizer.zero_grad()
+            clf_optimizer.zero_grad()
             loss.backward(
                 retain_graph = True if args.opt == 'khlars' else False,
                 create_graph = True if args.opt == 'khlars' else False
             )
-            optimizer.step()
+            clf_optimizer.step()
             clf_scheduler.step()
             
             if args.rank == 0:
@@ -249,6 +249,7 @@ def main_worker(gpu, args):
                 train_acc_5 += acc5.item()
         
         if args.rank == 0:
+            print('get here')
             log["train_loss"].append(train_loss/(batch_count+1))
             log["train_acc_1"].append(100.*(train_acc_1/(batch_count+1)))
             log["train_acc_5"].append(100.*(train_acc_5/(batch_count+1)))
