@@ -20,6 +20,8 @@ from scheduler.lars_warmup import adjust_learning_rate
 
 def folder_setup(args: argparse):
     runs_dir = os.getcwd() + "/runs"
+    if not os.path.exists(runs_dir):
+        os.mkdir(runs_dir)
     
     data_model_dir = runs_dir + f"/{args.ds}_{args.model}"
     if not os.path.exists(data_model_dir):

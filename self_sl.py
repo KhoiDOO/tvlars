@@ -22,6 +22,8 @@ from metric import accuracy
 
 def folder_setup(args: argparse):
     runs_dir = os.getcwd() + "/cl_runs"
+    if not os.path.exists(runs_dir):
+        os.mkdir(runs_dir)
     
     data_model_dir = runs_dir + f"/{args.ds}_{args.model}"
     if not os.path.exists(data_model_dir):
