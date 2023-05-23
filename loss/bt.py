@@ -12,7 +12,6 @@ class BTLoss(nn.Module):
     def __init__(self, args:argparse) -> None:
         super().__init__()
         self.args = args
-        
     
     def forward(self, z1: torch.Tensor, z2:torch.Tensor) -> torch.Tensor:
         #BN
@@ -22,7 +21,7 @@ class BTLoss(nn.Module):
         c = self.bn(z1).T @ self.bn(z2)
 
         # sum the cross-correlation matrix between all gpus
-        c.div_(self.args.batch_size)
+        c.div_(self.args.bs)
         torch.distributed.all_reduce(c)
 
         on_diag = torch.diagonal(c).add_(-1).pow_(2).sum()
