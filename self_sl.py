@@ -191,8 +191,6 @@ def main_worker(gpu, args):
             classifier_parameters.append(param)
         else:
             model_parameters.append(param) 
-    if args.opt != 'kh_lars':
-        model = DDP(model, device_ids=[gpu])
         
     param_groups = [dict(params=classifier_parameters, lr=args.lr_classifier)]
     param_groups.append(dict(params=model_parameters, lr=args.lr_backbone))
