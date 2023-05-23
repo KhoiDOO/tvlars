@@ -72,7 +72,7 @@ def cl_train_transform(size = None):
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
     ])
 
-def cl_valid_transform(size = None):
+def cl_test_transform(size = None):
     return transforms.Compose([
             transforms.RandomResizedCrop(size if size is not None else 224),
             transforms.RandomHorizontalFlip(),
