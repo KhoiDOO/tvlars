@@ -205,7 +205,7 @@ def main_worker(gpu, args):
     # Training Classification
     
     # resetup model
-    model.ffc = nn.Linear(args.vs, num_classes)
+    model.ffc = nn.Linear(args.vs, num_classes).cuda(gpu)
     model.ffc.weight.data.normal_(mean=0.0, std=0.01)
     model.ffc.bias.data.zero_()
     model.requires_grad_(False)
