@@ -181,7 +181,7 @@ def main_worker(gpu, args):
     
     # resetup model
     clf_model = get_model(model=args.model, num_classes=args.vs).cuda(gpu)
-    clf_model.load_state_dict(model.state_dict())
+    clf_model.load_state_dict(model.module.state_dict())
     clf_model.ffc = nn.Linear(args.vs, num_classes).cuda(gpu)
     clf_model.ffc.weight.data.normal_(mean=0.0, std=0.01)
     clf_model.ffc.bias.data.zero_()
