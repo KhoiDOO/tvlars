@@ -196,7 +196,7 @@ def main_worker(gpu, args):
         
     param_groups = [dict(params=classifier_parameters, lr=args.lr_classifier)]
     param_groups.append(dict(params=model_parameters, lr=args.lr_backbone))
-    optimizer = torch.optim.SGD(param_groups, 0, momentum=0.9, weight_decay=args.weight_decay)
+    optimizer = torch.optim.SGD(param_groups, 0, momentum=0.9, weight_decay=args.wd)
     clf_scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, args.epochs)
     
     # resetup data set
