@@ -58,10 +58,6 @@ def main(args: argparse):
     args.dist_url = f'tcp://localhost:{args.port}'
     args.world_size = args.ngpus
     
-    print(f"GPU count: {args.ngpus}")
-    print(f"dist_url: {args.dist_url}")
-    print(f"world size: {args.world_size}")
-    
     mp.spawn(main_worker, (args,), args.ngpus)
 
 def main_worker(gpu, args):
