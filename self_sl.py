@@ -183,8 +183,8 @@ def main_worker(gpu, args):
     model.ffc = nn.Linear(args.vs, num_classes).cuda(gpu)
     model.ffc.weight.data.normal_(mean=0.0, std=0.01)
     model.ffc.bias.data.zero_()
-    model.requires_grad_(False)
-    model.ffc.requires_grad_(True)   
+    # model.requires_grad_(False)
+    # model.ffc.requires_grad_(True)   
     classifier_parameters, model_parameters = [], []
     for name, param in model.named_parameters():
         if name in {'fcc.weight', 'fcc.bias'}:
@@ -255,7 +255,6 @@ def main_worker(gpu, args):
             log["train_acc_1"].append(100.*(train_acc_1/(batch_count+1)))
             log["train_acc_5"].append(100.*(train_acc_5/(batch_count+1)))
         
-        if args.rank == 0:
             if args.opt != 'khlars':
                 test_sampler.set_epoch(epoch)
             with torch.no_grad():

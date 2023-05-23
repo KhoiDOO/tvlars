@@ -181,7 +181,6 @@ def main_worker(gpu, args):
             log["train_loss"].append(train_loss/(batch_count+1))
             log["train_acc"].append(100.*correct/total)
         
-        if args.rank == 0:
             if args.opt != 'khlars':
                 test_sampler.set_epoch(epoch)
             with torch.no_grad():
