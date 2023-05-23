@@ -27,7 +27,7 @@ def folder_setup(args: argparse):
 def check_exp_exist(args):
     check_log_path = args.log_dir + f"/{args.bs}_{args.lr}_{args.sd}.parquet"
     check_ratio_path = args.log_dir + f"/{args.bs}_{args.lr}_{args.sd}.pickle"
-    filename = "/".join(check_log_path.split("/")[-3:]).replace('parquet', '')
+    filename = "/".join(check_log_path.split("/")[-3:]).replace('.parquet', '')
     if os.path.exists(check_log_path) and os.path.exists(check_ratio_path):
         print(f"{filename}: Existed -> Skipped")
         exit(0)
