@@ -103,6 +103,7 @@ def main_worker(gpu, args):
     
     # Model 
     model = get_model(model=args.model, num_classes=args.vs).cuda(gpu)
+    model = nn.SyncBatchNorm.convert_sync_batchnorm(model)
     if args.sd == "lars-warm":
         param_weights = []
         param_biases = []
