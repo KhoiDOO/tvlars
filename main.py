@@ -67,7 +67,7 @@ if __name__ == "__main__":
         torch.manual_seed(args.seed)
     
     if args.mode == 'clf':
-        from train import main
+        from clf import main
         main(args=args)
     elif args.mode == 'bt':
         from self_sl import main
