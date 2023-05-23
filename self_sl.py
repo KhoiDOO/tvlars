@@ -199,7 +199,7 @@ def main_worker(gpu, args):
     param_groups = [dict(params=classifier_parameters, lr=args.lr_classifier)]
     param_groups.append(dict(params=model_parameters, lr=args.lr_backbone))
     clf_optimizer = torch.optim.SGD(param_groups, 0, momentum=0.9, weight_decay=args.wd)
-    clf_scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, args.epochs)
+    clf_scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(clf_optimizer, args.epochs)
     
     # resetup data set
     num_classes, train_dataset, test_dataset = get_dataset(
@@ -253,10 +253,9 @@ def main_worker(gpu, args):
                 train_acc_5 += acc5.item()
         
         if args.rank == 0:
-            print('get here')
             log["train_loss"].append(train_loss/(batch_count+1))
-            log["train_acc_1"].append(100.*(train_acc_1/(batch_count+1)))
-            log["train_acc_5"].append(100.*(train_acc_5/(batch_count+1)))
+            log["train_acc_1"].append(train_acc_1/(batch_count+1))
+            log["train_acc_5"].append(train_acc_5/(batch_count+1))
         
             if args.opt != 'khlars':
                 test_sampler.set_epoch(epoch)
@@ -278,8 +277,8 @@ def main_worker(gpu, args):
                     test_acc_5 += acc5.item()
                 
                 log["test_loss"].append(test_loss/(batch_count+1))
-                log["test_acc_1"].append(100.*(test_acc_1/(batch_count+1)))
-                log["test_acc_5"].append(100.*(test_acc_1/(batch_count+1)))  
+                log["test_acc_1"].append(test_acc_1/(batch_count+1))
+                log["test_acc_5"].append(test_acc_1/(batch_count+1))
         
             print(f"Epoch: {epoch} - " + " - ".join([f"{key}: {log[key][epoch]}" for key in log]))
     
