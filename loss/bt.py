@@ -26,5 +26,5 @@ class BTLoss(nn.Module):
 
         on_diag = torch.diagonal(c).add_(-1).pow_(2).sum()
         off_diag = off_diagonal(c).pow_(2).sum()
-        loss = on_diag + self.bt_lambd * off_diag
+        loss = on_diag + self.args.bt_lambd * off_diag
         return loss
