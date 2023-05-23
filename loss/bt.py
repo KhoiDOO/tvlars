@@ -12,9 +12,12 @@ class BTLoss(nn.Module):
     def __init__(self, args:argparse) -> None:
         super().__init__()
         self.args = args
-        self.bn = nn.BatchNorm1d(self.args.vs, affine=False)
+        
     
-    def forward(self, z1, z2) -> torch.Tensor:
+    def forward(self, z1: torch.Tensor, z2:torch.Tensor) -> torch.Tensor:
+        #BN
+        self.bn = nn.BatchNorm1d(self.args.vs, affine=False).to(z1.device)
+        
         # empirical cross-correlation matrix
         c = self.bn(z1).T @ self.bn(z2)
 
