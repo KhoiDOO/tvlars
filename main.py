@@ -7,6 +7,9 @@ if __name__ == "__main__":
                     description='This project takes into considering the performance comparison between optimizers',
                     epilog='ENJOY!!!')
     
+    # MAIN
+    
+    ## ALL OPT
     parser.add_argument('--bs', type = int, default=32,
                     help='batch size')
     parser.add_argument('--workers', type = int, default=4,
@@ -29,12 +32,24 @@ if __name__ == "__main__":
                         help='optimizer used in training')
     parser.add_argument('--sd', type=str, default="None", choices=["None", 'cosine', 'lars-warm'],
                         help='Learning rate scheduler used in training')
+    parser.add_argument('--dv', nargs='+', default=-1,
+                        help='List of devices used in training', required=True)
     
+    ## TVLARS
     parser.add_argument('--lmbda', type=float, default=0.001,
                         help='Delay factor used in TVLARS')
     
-    parser.add_argument('--dv', nargs='+', default=-1,
-                        help='List of devices used in training', required=True)
+    ## BARLOW TWINS
+    parser.add_argument('--btlmbda', type=float, default=0.005,
+                        help='Lambda factor used in Barlow Twins')
+    parser.add_argument('--vs', type=int, default=128,
+                        help='Vector size')
+    parser.add_argument('--lr_classifier', type=float, default=0.3,    
+                        help='classifier learning rate')
+    
+    # MODE
+    parser.add_argument('--mode', type=str, default='clf', choices=['clf', 'bt'],
+                        help='Experiment Mode')
     
     args = parser.parse_args()
     
@@ -51,5 +66,9 @@ if __name__ == "__main__":
         np.random.seed(args.seed)
         torch.manual_seed(args.seed)
     
-    from train import main
-    main(args=args)
+    if args.mode == 'clf':
+        from train import main
+        main(args=args)
+    elif args.mode == 'bt':
+        from self_sl import main
+        main(args=args)
