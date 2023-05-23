@@ -67,8 +67,10 @@ if __name__ == "__main__":
         torch.manual_seed(args.seed)
     
     if args.mode == 'clf':
+        print(f"SIMPLE CLASSFICATION EXPERIMENT")
         from clf import main
         main(args=args)
     elif args.mode == 'bt':
+        print(f"BARLOW TWINS - SELF SUPERVISED LEARNING")
         from self_sl import main
         main(args=args)
