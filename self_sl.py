@@ -193,7 +193,7 @@ def main_worker(gpu, args):
             classifier_parameters.append(param)
         else:
             model_parameters.append(param)
-    clf_model = DDP(clf_model, device_ids=[gpu])
+    clf_model = DDP(clf_model, device_ids=[gpu], find_unused_parameters=True)
     del model
         
     param_groups = [dict(params=classifier_parameters, lr=args.lr_classifier)]
