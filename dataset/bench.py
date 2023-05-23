@@ -26,15 +26,18 @@ base_test_transform = transforms.Compose(
 data_map = {
     "cifar10" : {
         '#class' : 10,
-        'dataset' : datasets.CIFAR10
+        'dataset' : datasets.CIFAR10,
+        'img_size' : 32
     },
     'cifar100' : {
         '#class' : 100,
-        'dataset' : datasets.CIFAR100
+        'dataset' : datasets.CIFAR100,
+        'img_size' : 32
     },
     'imagenet' : {
         '#class' : 1000,
-        'dataset' : datasets.ImageNet
+        'dataset' : datasets.ImageNet,
+        'img_size' : 224
     }
 }
 
