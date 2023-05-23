@@ -173,3 +173,4 @@ backup/
 run.sh
 run_lars.sh
 run_tvlars.sh
+run_lamb.sh
