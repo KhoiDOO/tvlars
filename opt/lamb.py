@@ -98,7 +98,7 @@ class LAMB(Optimizer):
                     trust_ratio = 1
                 else:
                     trust_ratio = weight_norm / adam_norm
-                lst.append(trust_ratio.item())
+                lst.append(trust_ratio)
                 state['weight_norm'] = weight_norm
                 state['adam_norm'] = adam_norm
                 state['trust_ratio'] = trust_ratio
