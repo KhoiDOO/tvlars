@@ -128,7 +128,7 @@ def main_worker(gpu, args):
             params=parameters if args.sd == "lars-warm" else model.parameters(),
             lr = args.lr,
             weight_decay=args.wd,
-            adam=True
+            adam=False
         )
     
     # Learning Scheduler / Warm Up
