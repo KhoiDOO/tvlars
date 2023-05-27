@@ -163,6 +163,7 @@ cython_debug/
 *.parquet
 results/
 result_plot/
+ratio_plot_result/
 clean_report.json
 backup/
 *.zip
