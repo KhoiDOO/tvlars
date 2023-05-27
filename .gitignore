@@ -175,3 +175,6 @@ run.sh
 run_lars.sh
 run_tvlars.sh
 run_lamb.sh
+cl_run_lamb.sh
+cl_run_lars.sh
+cl_run_tvlars.sh
