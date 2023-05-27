@@ -60,8 +60,8 @@ def main_worker(gpu, args):
     
     # Data Loader
     num_classes, train_dataset, test_dataset = get_dataset(
-        dataset_name=args.ds,
-        train_transform=CLTransform()
+        args=args,
+        bt_stage=0
     )
     
     assert args.bs % args.world_size == 0
@@ -203,9 +203,8 @@ def main_worker(gpu, args):
     
     # resetup data set
     num_classes, train_dataset, test_dataset = get_dataset(
-        dataset_name=args.ds,
-        train_transform=cl_train_transform(size=data_map[args.ds]["img_size"]),
-        test_transform=cl_test_transform(size=data_map[args.ds]["img_size"])
+        args=args,
+        bt_stage=1
     )
     
     assert args.bs % args.world_size == 0
