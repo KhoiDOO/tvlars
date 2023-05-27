@@ -1,19 +1,22 @@
 from torchvision import datasets
 from torchvision import transforms
+import argparse
+from .cl import *
 
 # Save data path
 save_dir = "~/data/"
 
 # Data Augmentation
-base_train_transform = transforms.Compose(
-    [
-        transforms.RandomCrop(32, padding=4),
-        transforms.RandomHorizontalFlip(),
-        transforms.RandomRotation(15),
-        transforms.ToTensor(),
-        transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
-    ]
-)
+def get_base_train_transform(size):
+    return transforms.Compose(
+        [
+            transforms.RandomCrop(size, padding=4),
+            transforms.RandomHorizontalFlip(),
+            transforms.RandomRotation(15),
+            transforms.ToTensor(),
+            transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
+        ]
+    )
 
 base_test_transform = transforms.Compose(
     [
@@ -42,13 +45,24 @@ data_map = {
 }
 
 # Get Dataset
-def get_dataset(dataset_name:str, train_transform = base_train_transform, test_transform = base_test_transform):
-    if dataset_name not in list(data_map.keys()):
-        raise Exception(f"The data set {dataset_name} is currently not supported")
-    data_info = data_map[dataset_name]
+def get_dataset(args: argparse, bt_stage):
+    if args.ds not in list(data_map.keys()):
+        raise Exception(f"The data set {args.ds} is currently not supported")
+    data_info = data_map[args.ds]
     class_cnt = data_info['#class']
     
-    if dataset_name == 'imagenet':
+    if args.mode == 'clf':
+        train_transform = get_base_train_transform(size=data_map[args.ds]['img_size'])
+        test_transform = base_test_transform
+    elif args.mode == 'bt':
+        if bt_stage == 0:
+            train_transform = CLTransform(size=data_map[args.ds]['img_size'])
+            test_transform = cl_test_transform(size=data_map[args.ds]['img_size'])
+        elif bt_stage == 1:
+            train_transform = cl_train_transform(size=data_map[args.ds]['img_size'])
+            test_transform = cl_test_transform(size=data_map[args.ds]['img_size'])
+    
+    if args.ds == 'imagenet':
         train_dataset = data_info['dataset'](
             root = save_dir,
             transform = train_transform,
