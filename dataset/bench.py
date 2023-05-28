@@ -41,6 +41,11 @@ data_map = {
         '#class' : 1000,
         'dataset' : datasets.ImageNet,
         'img_size' : 224
+    },
+    'tinyimagenet' : {
+        '#class' : 200,
+        'dataset' : datasets.ImageFolder,
+        'img_size' : 224
     }
 }
 
@@ -72,6 +77,15 @@ def get_dataset(args: argparse, bt_stage):
             root = save_dir,
             transform = test_transform,
             split = 'val'
+        )
+    elif args.ds == 'tinyimagenet':
+        train_dataset = data_info['dataset'](
+            root = 'tinyimagenet/src/train',
+            transform = train_transform
+        )
+        test_dataset = data_info['dataset'](
+            root = 'tinyimagenet/src/test',
+            transform = test_transform
         )
         
     else:
