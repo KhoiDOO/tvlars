@@ -187,7 +187,7 @@ def main_worker(gpu, args):
     clf_model = get_model(model=args.model, num_classes=num_classes).cuda(gpu)
     missing_keys, unexpected_keys = clf_model.load_state_dict(model.module.backbone.state_dict(), strict=False)
     if missing_keys == ['fc.weight', 'fc.bias'] and unexpected_keys == []:
-        clf_model.fc = nn.Linear(512, num_classes)
+        clf_model.fc = nn.Linear(512, num_classes).cuda(gpu)
     clf_model.fc.weight.data.normal_(mean=0.0, std=0.01)
     clf_model.fc.bias.data.zero_()
     clf_model.requires_grad_(False)
