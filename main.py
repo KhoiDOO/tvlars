@@ -24,7 +24,7 @@ if __name__ == "__main__":
     parser.add_argument('--wd', default=5e-4, type=float, metavar='W',
                     help='weight decay')
     
-    parser.add_argument('--ds', type=str, default='cifar10', choices=['cifar10', 'cifar100', 'imagenet'],
+    parser.add_argument('--ds', type=str, default='cifar10', choices=['cifar10', 'cifar100', 'tinyimagenet'],
                         help='Data set name')
     parser.add_argument('--model', type=str, default='resnet18', choices= ['resnet18', 'resnet50', 'effb0'],
                         help='model used in training')
