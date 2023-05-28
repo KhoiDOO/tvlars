@@ -14,9 +14,8 @@ from torch.utils.data.distributed import DistributedSampler
 from torch.utils.data import DataLoader
 
 from dataset import *
-from model.base import get_model
+from model import get_model, BarlowTwins
 from opt import *
-from loss import BTLoss
 from scheduler.base import get_sche
 from scheduler.lars_warmup import adjust_learning_rate
 from metric import accuracy
@@ -73,7 +72,7 @@ def main_worker(gpu, args):
     )
     
     # Model 
-    model = get_model(model=args.model, num_classes=args.vs).cuda(gpu)
+    model = BarlowTwins(args=args).cuda(gpu)
     model = nn.SyncBatchNorm.convert_sync_batchnorm(model)
     if args.sd == "lars-warm":
         param_weights = []
@@ -147,6 +146,7 @@ def main_worker(gpu, args):
         )
     
     # Training Constrastive Learning
+    scaler = torch.cuda.amp.GradScaler()
     for epoch in range(args.epochs):
         if args.opt != 'khlars':
             train_sampler.set_epoch(epoch)
@@ -156,15 +156,19 @@ def main_worker(gpu, args):
             if args.sd == 'lars-warm':
                 adjust_learning_rate(args, optimizer, train_loader, step)
             batch_count = step
-            e1, e2 = model(img1.cuda(gpu, non_blocking=True)), model(img2.cuda(gpu, non_blocking=True))
-            loss = BTLoss(args=args)(e1, e2)
-            
             optimizer.zero_grad()
-            loss.backward(
+            img1 = img1.cuda(gpu, non_blocking=True)
+            img2 = img2.cuda(gpu, non_blocking=True)
+            
+            with torch.cuda.amp.autocast():
+                loss = model(img1, img2)
+            
+            scaler.scale(loss).backward(
                 retain_graph = True if args.opt == 'khlars' else False,
                 create_graph = True if args.opt == 'khlars' else False
             )
-            optimizer.step()
+            scaler.step(optimizer)
+            scaler.update()
             
             if args.sd == 'cosine':
                 scheduler.step()
@@ -180,16 +184,16 @@ def main_worker(gpu, args):
     # Training Classification
     
     # resetup model
-    clf_model = get_model(model=args.model, num_classes=args.vs).cuda(gpu)
-    clf_model.load_state_dict(model.module.state_dict())
-    clf_model.ffc = nn.Linear(args.vs, num_classes).cuda(gpu)
-    clf_model.ffc.weight.data.normal_(mean=0.0, std=0.01)
-    clf_model.ffc.bias.data.zero_()
-    # model.requires_grad_(False)
-    # model.ffc.requires_grad_(True)   
+    clf_model = get_model(model=args.model, num_classes=num_classes).cuda(gpu)
+    missing_keys, unexpected_keys = clf_model.load_state_dict(model.module.backbone.state_dict())
+    assert missing_keys == ['fc.weight', 'fc.bias'] and unexpected_keys == []
+    clf_model.fc.weight.data.normal_(mean=0.0, std=0.01)
+    clf_model.fc.bias.data.zero_()
+    model.requires_grad_(False)
+    model.fc.requires_grad_(True)   
     classifier_parameters, model_parameters = [], []
     for name, param in clf_model.named_parameters():
-        if name in {'fcc.weight', 'fcc.bias'}:
+        if name in {'fc.weight', 'fc.bias'}:
             classifier_parameters.append(param)
         else:
             model_parameters.append(param)
@@ -207,10 +211,10 @@ def main_worker(gpu, args):
         bt_stage=1
     )
     
-    assert args.bs % args.world_size == 0
+    # assert args.bs % args.world_size == 0
     train_sampler = DistributedSampler(train_dataset) if args.opt != 'khlars' else None
     test_sampler = DistributedSampler(test_dataset) if args.opt != 'khlars' else None
-    per_device_batch_size = args.bs // args.world_size
+    per_device_batch_size = 256 // args.world_size
 
     train_loader = DataLoader(
         dataset=train_dataset, batch_size=per_device_batch_size, num_workers=args.workers, pin_memory=True, sampler=train_sampler
