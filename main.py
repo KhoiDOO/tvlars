@@ -42,8 +42,8 @@ if __name__ == "__main__":
     ## BARLOW TWINS
     parser.add_argument('--btlmbda', type=float, default=0.005,
                         help='Lambda factor used in Barlow Twins')
-    parser.add_argument('--vs', type=int, default=128,
-                        help='Vector size')
+    parser.add_argument('--projector', type=str, default='4096-4096-4096',
+                        help='projector network')
     parser.add_argument('--lr_classifier', type=float, default=0.3,    
                         help='classifier learning rate')
     parser.add_argument('--lr_backbone', type=float, default=0,    
