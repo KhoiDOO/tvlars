@@ -190,8 +190,8 @@ def main_worker(gpu, args):
         clf_model.fc = nn.Linear(512, num_classes)
     clf_model.fc.weight.data.normal_(mean=0.0, std=0.01)
     clf_model.fc.bias.data.zero_()
-    model.requires_grad_(False)
-    model.fc.requires_grad_(True)   
+    clf_model.requires_grad_(False)
+    clf_model.fc.requires_grad_(True)   
     classifier_parameters, model_parameters = [], []
     for name, param in clf_model.named_parameters():
         if name in {'fc.weight', 'fc.bias'}:
