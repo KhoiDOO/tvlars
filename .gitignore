@@ -169,6 +169,7 @@ backup/
 *.zip
 *.pickle
 *.csv
+*.parquet
 
 # Script Generation
 run.sh
@@ -180,4 +181,5 @@ cl_run_lars.sh
 cl_run_tvlars.sh
 
 # Dataset
+*.parquet
 dataset/tinyimagenet/src/
