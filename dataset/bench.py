@@ -1,3 +1,5 @@
+import os
+from pathlib import Path
 from torchvision import datasets
 from torchvision import transforms
 import argparse
@@ -45,12 +47,12 @@ data_map = {
     'tinyimagenet' : {
         '#class' : 200,
         'dataset' : datasets.ImageFolder,
-        'img_size' : 224
+        'img_size' : 64
     }
 }
 
 # Get Dataset
-def get_dataset(args: argparse, bt_stage):
+def get_dataset(args: argparse, bt_stage = None):
     if args.ds not in list(data_map.keys()):
         raise Exception(f"The data set {args.ds} is currently not supported")
     data_info = data_map[args.ds]
@@ -80,11 +82,11 @@ def get_dataset(args: argparse, bt_stage):
         )
     elif args.ds == 'tinyimagenet':
         train_dataset = data_info['dataset'](
-            root = 'tinyimagenet/src/train',
+            root = str(Path(__file__).parent.absolute()) + '/tinyimagenet/src/train',
             transform = train_transform
         )
         test_dataset = data_info['dataset'](
-            root = 'tinyimagenet/src/test',
+            root = str(Path(__file__).parent.absolute()) + '/tinyimagenet/src/test',
             transform = test_transform
         )
         
