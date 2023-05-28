@@ -160,7 +160,7 @@ cython_debug/
 #.idea/
 
 # Logging Folders/Files
-*.parquet
+runs/
 results/
 result_plot/
 ratio_plot_result/
@@ -178,3 +178,6 @@ run_lamb.sh
 cl_run_lamb.sh
 cl_run_lars.sh
 cl_run_tvlars.sh
+
+# Dataset
+dataset/tinyimagenet/src/
