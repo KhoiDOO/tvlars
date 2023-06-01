@@ -146,6 +146,7 @@ def main_worker(gpu, args):
     
     # Training and Evaluation
     for epoch in range(args.epochs):
+        model.train()
         if args.opt != 'khlars':
             train_sampler.set_epoch(epoch)
         train_loss = 0
@@ -183,6 +184,7 @@ def main_worker(gpu, args):
         
             if args.opt != 'khlars':
                 test_sampler.set_epoch(epoch)
+            model.eval()
             with torch.no_grad():
                 test_loss = 0
                 correct = 0
