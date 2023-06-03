@@ -170,6 +170,7 @@ backup/
 *.pickle
 *.csv
 *.parquet
+*.png
 
 # Script Generation
 run.sh
