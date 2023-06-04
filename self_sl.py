@@ -287,6 +287,11 @@ def main_worker(gpu, args):
             print(f"Epoch: {epoch} - " + " - ".join([f"{key}: {log[key][epoch]}" for key in log]))
     
     if args.rank == 0:
+        
+        for key in log:
+            if len(log[key]) < args.cl_epochs:
+                log[key] += [None]*(args.cl_epochs - args.epochs)
+        
         log_df = pd.DataFrame(log)
         log_df.to_parquet(log_path)
         
