@@ -40,6 +40,8 @@ if __name__ == "__main__":
                         help='Delay factor used in TVLARS')
     
     ## BARLOW TWINS
+    parser.add_argument('--cl_epochs', type=int, default=1000,
+                        help='Epoch used in barlow twins')
     parser.add_argument('--btlmbda', type=float, default=0.005,
                         help='Lambda factor used in Barlow Twins')
     parser.add_argument('--projector', type=str, default='4096-4096-4096',
