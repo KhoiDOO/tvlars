@@ -228,7 +228,7 @@ def main_worker(gpu, args):
     criterion = nn.CrossEntropyLoss()
     
     # CLF train 
-    for epoch in range(args.epochs):
+    for epoch in range(args.cl_epochs):
         if args.opt != 'khlars':
             train_sampler.set_epoch(epoch)
         train_loss = 0
