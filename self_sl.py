@@ -282,7 +282,7 @@ def main_worker(gpu, args):
                 
                 log["test_loss"].append(test_loss/(batch_count+1))
                 log["test_acc_1"].append(test_acc_1/(batch_count+1))
-                log["test_acc_5"].append(test_acc_1/(batch_count+1))
+                log["test_acc_5"].append(test_acc_5/(batch_count+1))
         
             print(f"Epoch: {epoch} - " + " - ".join([f"{key}: {log[key][epoch]}" for key in log]))
     
