@@ -74,6 +74,7 @@ def main_worker(gpu, args):
     # Model 
     model = BarlowTwins(args=args).cuda(gpu)
     model = nn.SyncBatchNorm.convert_sync_batchnorm(model)
+    model = torch.compile(model=model)
     if args.sd == "lars-warm":
         param_weights = []
         param_biases = []
