@@ -4,6 +4,7 @@ from torchvision import models
 
 model_map = {
     'resnet18' : models.resnet18,
+    'resnet34' : models.resnet34,
     'resnet50' : models.resnet50,
     'effb0' : models.efficientnet_b0
 }
