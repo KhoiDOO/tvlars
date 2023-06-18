@@ -161,7 +161,7 @@ def main_worker(gpu, args):
             img1 = img1.cuda(gpu, non_blocking=True)
             img2 = img2.cuda(gpu, non_blocking=True)
             
-            with torch.cuda.amp.autocast():
+            with torch.cuda.amp.autocast(enabled=False):
                 loss = model(img1, img2)
             
             scaler.scale(loss).backward(
