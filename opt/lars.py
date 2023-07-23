@@ -13,13 +13,17 @@ class LARS(optim.Optimizer):
         
         self.step_cnt = 0
         self.ratio_log = {}
+        self.weight_log = {}
+        self.gradient_log = {}
 
     def exclude_bias_and_norm(self, p):
         return p.ndim == 1
 
     @torch.no_grad()
     def step(self):
-        lst = []
+        ratio_lst = []
+        weight_lst = []
+        gradient_lst = []
         for g in self.param_groups:
             for p in g['params']:
                 dp = p.grad
@@ -39,7 +43,9 @@ class LARS(optim.Optimizer):
                                     torch.where(update_norm > 0,
                                                 (ratio), one), one)
                     dp = dp.mul(q)
-                    lst.append(ratio.item())
+                    ratio_lst.append(ratio.item())
+                    weight_lst.append(param_norm.item())
+                    gradient_lst.append(update_norm.item())
 
                 param_state = self.state[p]
                 if 'mu' not in param_state:
@@ -48,5 +54,7 @@ class LARS(optim.Optimizer):
                 mu.mul_(g['momentum']).add_(dp)
 
                 p.add_(mu, alpha=-g['lr'])
-        self.ratio_log[self.step_cnt] = lst
+        self.ratio_log[self.step_cnt] = ratio_lst
+        self.weight_log[self.step_cnt] = weight_lst
+        self.gradient_log[self.step_cnt] = gradient_lst
         self.step_cnt += 1
