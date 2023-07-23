@@ -213,11 +213,21 @@ def main_worker(gpu, args):
         
         if args.opt in ['lars', 'tvlars', 'khlars', 'clars', 'lamb']:
             ratio_log = optimizer.ratio_log
+            weight_log = optimizer.weight_log
+            gradient_log = optimizer.gradient_log
             
-            ratio_log_path = args.log_dir + f"/{args.bs}_{args.lr}_{args.sd}.pickle"
+            ratio_log_path = args.log_dir + f"/ratio_{args.bs}_{args.lr}_{args.sd}.pickle"
+            weight_log_path = args.log_dir + f"/weight_{args.bs}_{args.lr}_{args.sd}.pickle"
+            gradient_log_path = args.log_dir + f"/gradient_{args.bs}_{args.lr}_{args.sd}.pickle"
             
             with open(ratio_log_path, 'wb') as handle:
                 pickle.dump(ratio_log, handle)
+                
+            with open(weight_log_path, 'wb') as handle:
+                pickle.dump(weight_log, handle)
+            
+            with open(gradient_log_path, 'wb') as handle:
+                pickle.dump(gradient_log, handle)
                 
             if args.opt == 'khlars':
                 hessian_log = optimizer.hessian_log
