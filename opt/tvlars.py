@@ -34,8 +34,8 @@ class TVLARS(optim.Optimizer):
                     dp = dp.add(p, alpha=g['weight_decay'])
 
                 if not g['lars_adaptation_filter'] or not self.exclude_bias_and_norm(p):
-                    param_norm = p.data.pow(2).sum().sqrt().clamp(0, 10)
-                    update_norm = dp.data.pow(2).sum().sqrt().clamp(0, 10)
+                    param_norm = torch.norm(p)
+                    update_norm = torch.norm(dp)
                     one = torch.ones_like(param_norm)
                     ratio = g['eta'] * torch.pow(
                                                 torch.exp(
