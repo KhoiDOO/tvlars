@@ -181,6 +181,8 @@ cl_run_lamb.sh
 cl_run_lars.sh
 cl_run_tvlars.sh
 
+backup.sh
+
 # Dataset
 *.parquet
 dataset/tinyimagenet/src/
