@@ -39,6 +39,8 @@ class LAMB(Optimizer):
         self.adam = adam
         self.step_cnt = 0
         self.ratio_log = {}
+        self.weight_log = {}
+        self.gradient_log = {}
         super(LAMB, self).__init__(params, defaults)
 
     def step(self, closure=None):
@@ -51,7 +53,9 @@ class LAMB(Optimizer):
         loss = None
         if closure is not None:
             loss = closure()
-        lst = []
+        ratio_lst = []
+        weight_lst = []
+        gradient_lst = []
         for group in self.param_groups:
             for p in group['params']:
                 if p.grad is None:
@@ -98,7 +102,9 @@ class LAMB(Optimizer):
                     trust_ratio = 1
                 else:
                     trust_ratio = weight_norm / adam_norm
-                lst.append(trust_ratio.item() if isinstance(trust_ratio, torch.Tensor) else trust_ratio)
+                ratio_lst.append(trust_ratio.item() if isinstance(trust_ratio, torch.Tensor) else trust_ratio)
+                weight_lst.append(weight_norm.item())
+                gradient_lst.append(adam_norm.item())
                 state['weight_norm'] = weight_norm
                 state['adam_norm'] = adam_norm
                 state['trust_ratio'] = trust_ratio
@@ -107,6 +113,8 @@ class LAMB(Optimizer):
 
                 p.data.add_(adam_step, alpha=-step_size * trust_ratio)
 
-        self.ratio_log[self.step_cnt] = lst
+        self.ratio_log[self.step_cnt] = ratio_lst
+        self.weight_log[self.step_cnt] = weight_lst
+        self.gradient_log[self.step_cnt] = gradient_lst
         self.step_cnt += 1
         return loss
