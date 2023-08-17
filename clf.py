@@ -98,22 +98,6 @@ def main_worker(gpu, args):
             weight_decay_filter=True, 
             lars_adaptation_filter=True
         )
-    elif args.opt == 'khlars':
-        optimizer = KHLARS(
-            params=model.parameters(), 
-            weight_decay=args.wd, 
-            lr=args.lr, 
-            weight_decay_filter=True, 
-            lars_adaptation_filter=True
-        )
-    elif args.opt == 'clars':
-        optimizer = CLARS(
-            params=parameters, 
-            weight_decay=args.wd, 
-            lr=args.lr, 
-            weight_decay_filter=True, 
-            lars_adaptation_filter=True
-        )
     elif args.opt == 'tvlars':
         optimizer = TVLARS(
             params=model.parameters(), 
@@ -215,7 +199,7 @@ def main_worker(gpu, args):
         log_df = pd.DataFrame(log)
         log_df.to_parquet(log_path)
         
-        if args.opt in ['lars', 'tvlars', 'khlars', 'clars', 'lamb']:
+        if args.opt in ['lars', 'tvlars', 'lamb']:
             ratio_log = optimizer.ratio_log
             weight_log = optimizer.weight_log
             gradient_log = optimizer.gradient_log
@@ -232,12 +216,5 @@ def main_worker(gpu, args):
             
             with open(gradient_log_path, 'wb') as handle:
                 pickle.dump(gradient_log, handle)
-                
-            if args.opt == 'khlars':
-                hessian_log = optimizer.hessian_log
-                hessian_log_path = args.log_dir + f"/hessian_{args.bs}_{args.lr}_{args.sd}.pickle"
-                
-                with open(hessian_log_path, 'wb') as handle:
-                    pickle.dump(hessian_log, handle)
     
     dist.destroy_process_group()
