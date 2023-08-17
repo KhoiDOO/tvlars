@@ -19,7 +19,7 @@ class TVLARS(optim.Optimizer):
         return p.ndim == 1
 
     @torch.no_grad()
-    def step(self):
+    def step(self, unit_step_cnt, epoch_delay_cnt = 10):
         ratio_lst = []
         weight_lst = []
         gradient_lst = []
@@ -34,16 +34,20 @@ class TVLARS(optim.Optimizer):
                     dp = dp.add(p, alpha=g['weight_decay'])
 
                 if not g['lars_adaptation_filter'] or not self.exclude_bias_and_norm(p):
-                    param_norm = torch.norm(p)
-                    update_norm = torch.norm(dp)
+                    param_norm = p.data.pow(2).sum().sqrt().clamp(0, 10)
+                    update_norm = dp.data.pow(2).sum().sqrt().clamp(0, 10)
                     one = torch.ones_like(param_norm)
-                    ratio = g['eta'] * torch.pow(
-                                                torch.exp(
-                                                    g['lmbda'] * torch.FloatTensor([self.step_cnt + 1])
-                                                    )[0], -1
-                                                ) * param_norm / update_norm
+                    if int(self.step_cnt / unit_step_cnt) >= epoch_delay_cnt:
+                        ratio = g['eta'] * torch.pow(
+                                                    0.1 + torch.exp(
+                                                        g['lmbda'] * torch.FloatTensor([self.step_cnt + 1])
+                                                        )[0], -1
+                                                    ) * param_norm / update_norm
+                    else:
+                        ratio = g['eta'] * param_norm / update_norm
+                        
                     q = torch.where(param_norm > 0.,
-                                    torch.where(update_norm > 0,
+                                    torch.where(update_norm > 0.,
                                                 (ratio), one), one)
                     dp = dp.mul(q)
                     ratio_lst.append(ratio.item())

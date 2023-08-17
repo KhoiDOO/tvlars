@@ -167,7 +167,11 @@ def main_worker(gpu, args):
                 retain_graph = True if args.opt == 'khlars' else False,
                 create_graph = True if args.opt == 'khlars' else False
             )
-            optimizer.step()
+            
+            if args.opt == 'tvlars':
+                optimizer.step(unit_step_cnt = len(train_loader), epoch_delay_cnt = 10)
+            else:
+                optimizer.step()
             
             if args.sd == 'cosine':
                 scheduler.step()
