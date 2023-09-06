@@ -34,10 +34,10 @@ Using ```python main.py -h``` to print out all available settings of this projec
 | --seed SEED                   |                                              | seed for initializing training                                                |
 | --port PORT                   |                                              | Multi-GPU Training Port                                                       |
 | --wd W                        |                                              | weight decay                                                                  |
-| --ds                          | cifar10,cifar100, tinyimagenet               | data set name                                                                 |
-| --model                       | resnet18,resnet34, resnet50,effb0            | model used in training                                                        |
-| --opt                         | adam,adamw,adagrad, rmsprop,lars,tvlars,lamb | optimizer used in training                                                    |
-| --sd                          | None,cosine, lars-warm                       | learning rate scheduler used in training                                      |
+| --ds                          | cifar10, cifar100, tinyimagenet              | data set name                                                                 |
+| --model                       | resnet18, resnet34, resnet50, effb0          | model used in training                                                        |
+| --opt                         | adam, adamw, adagrad, rmsprop, lars, tvlars, lamb | optimizer used in training                                               |
+| --sd                          | None, cosine, lars-warm                       | learning rate scheduler used in training                                      |
 | --dv DV [DV ...]              |                                              | list of devices used in training                                              |
 | --lmbda LMBDA                 |                                              | delay factor used in TVLARS                                                   |
 | --cl_epochs CL_EPOCHS         |                                              | epoch used in Barlow twins feature redundant removal stage                    |
