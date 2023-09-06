@@ -11,7 +11,7 @@ git clone https://github.com/KhoiDOO/tvlars.git
 cd path/to/tvlars
 python -m venv .env
 ```
-The Python packages used in this project are listed below. Crucially, ```parquet``` and ```pyarrow``` are used for writing and saving ```.parquet``` file, which is a strongly compressed file for saving the DataFrame.
+The Python packages used in this project are listed below. Crucially, ```parquet``` and ```pyarrow``` are used for writing and saving ```.parquet``` file, which is a strongly compressed file for saving the DataFrame. All the packages can be installed by command ```pip install -r requirements.txt```. If ```parquet``` does not work with your machine, consider using ```fastparquet``` instead.
 ```
 matplotlib==3.7.1
 numpy==1.24.3
@@ -21,7 +21,7 @@ pyarrow==12.0.0
 seaborn==0.12.2
 tqdm==4.65.0
 ```
-[Torch](https://pytorch.org/) is the main package for conducting optimization calculations, whose version is ```2.0.1```.
+[Pytorch](https://pytorch.org/) is the main package for conducting optimization calculations, whose version is ```2.0.1```.
 ## Available Settings
 Using ```python main.py -h``` to print out all available settings of this project. The table below show the tag as well as its related description. 
 | **TAG**                       | **OPTIONS**                                  | **DESCRIPTION**                                                               |
