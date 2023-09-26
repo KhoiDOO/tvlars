@@ -94,5 +94,12 @@ python main.py --bs 512 --epochs 100 --cl_epochs 1000 --lr 3.0 --port 7954 --wd 
 
 # Citation
 ```
-
+@misc{do2023revisiting,
+      title={Revisiting LARS for Large Batch Training Generalization of Neural Networks}, 
+      author={Khoi Do and Duong Nguyen and Hoa Nguyen and Long Tran-Thanh and Quoc-Viet Pham},
+      year={2023},
+      eprint={2309.14053},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG}
+}
 ```
