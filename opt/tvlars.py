@@ -37,14 +37,11 @@ class TVLARS(optim.Optimizer):
                     param_norm = p.data.pow(2).sum().sqrt().clamp(0, 10)
                     update_norm = dp.data.pow(2).sum().sqrt().clamp(0, 10)
                     one = torch.ones_like(param_norm)
-                    if int(self.step_cnt / unit_step_cnt) >= epoch_delay_cnt:
-                        ratio = g['eta'] * torch.pow(
-                                                    0.1 + torch.exp(
-                                                        g['lmbda'] * torch.FloatTensor([self.step_cnt + 1])
-                                                        )[0], -1
-                                                    ) * param_norm / update_norm
-                    else:
-                        ratio = g['eta'] * param_norm / update_norm
+                    ratio = g['eta'] * torch.pow(
+                                                0.1 + torch.exp(
+                                                    g['lmbda'] * torch.FloatTensor([self.step_cnt + 1])
+                                                    )[0], -1
+                                                ) * param_norm / update_norm
                         
                     q = torch.where(param_norm > 0.,
                                     torch.where(update_norm > 0.,
