@@ -10,7 +10,7 @@ def folder_setup(args: argparse):
     if not os.path.exists(runs_dir):
         os.mkdir(runs_dir)
     
-    data_model_dir = runs_dir + f"/{args.ds}_{args.model}"
+    data_model_dir = runs_dir + f"/{args.ds}_{args.model}_{args.winit}"
     if not os.path.exists(data_model_dir):
         os.mkdir(data_model_dir)
     

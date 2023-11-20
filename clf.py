@@ -69,7 +69,7 @@ def main_worker(gpu, args):
     )
     
     # Model 
-    model = get_model(model=args.model, num_classes=num_classes).cuda(gpu)
+    model = get_model(model=args.model, num_classes=num_classes, winit = args.winit).cuda(gpu)
     if args.sd == "lars-warm":
         param_weights = []
         param_biases = []
@@ -79,8 +79,7 @@ def main_worker(gpu, args):
             else:
                 param_weights.append(param)
         parameters = [{'params': param_weights}, {'params': param_biases}]
-    if args.opt != 'khlars':
-        model = DDP(model, device_ids=[gpu])
+    model = DDP(model, device_ids=[gpu])
     
     # Optimizer
     if args.opt not in ['lars', 'tvlars', 'khlars', 'lamb', 'clars']:

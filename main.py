@@ -34,6 +34,9 @@ if __name__ == "__main__":
                         help='Learning rate scheduler used in training')
     parser.add_argument('--dv', nargs='+', default=-1,
                         help='List of devices used in training', required=True)
+    parser.add_argument('--winit', type=str, default='xavier_uniform', choices = [
+        'xavier_uniform', 'xavier_normal', 'kaiming_uniform', 'kaiming_normal'],
+                        help='weight initialization method')
     
     ## TVLARS
     parser.add_argument('--lmbda', type=float, default=0.001,
