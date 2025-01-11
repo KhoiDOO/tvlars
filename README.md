@@ -94,12 +94,15 @@ python main.py --bs 512 --epochs 100 --cl_epochs 1000 --lr 3.0 --port 7954 --wd 
 
 # Citation
 ```
-@misc{do2023revisiting,
+@ARTICLE{tvlars,
+      author={Do, Khoi and Nguyen, Minh-Duong and Hoa, Nguyen Tien and Tran-Thanh, Long and Tran, Nguyen H. and Pham, Quoc-Viet},
+      journal={IEEE Transactions on Artificial Intelligence}, 
       title={Revisiting LARS for Large Batch Training Generalization of Neural Networks}, 
-      author={Khoi Do and Duong Nguyen and Hoa Nguyen and Long Tran-Thanh and Quoc-Viet Pham},
-      year={2023},
-      eprint={2309.14053},
-      archivePrefix={arXiv},
-      primaryClass={cs.LG}
+      year={2024},
+      volume={},
+      number={},
+      pages={1-12},
+      keywords={Training;Convergence;Artificial intelligence;Vectors;Computer science;Accuracy;Optimization;Hardware;Faces;Eigenvalues and eigenfunctions;Artificial intelligence algorithmic design and analysis;Classification and regression;Deep learning;Machine learning},
+      doi={10.1109/TAI.2024.3523252}
 }
 ```
